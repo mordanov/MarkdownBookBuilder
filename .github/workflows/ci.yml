@@ -7,42 +7,9 @@ on:
     branches: [main, develop]
 
 jobs:
-  pre-commit:
-    name: Pre-commit Checks
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v2
-        with:
-          version: "latest"
-
-      - name: Install dependencies
-        run: uv sync
-
-      - name: Run Ruff checks
-        run: |
-          .venv/bin/ruff check src/ tests/ --fix
-          .venv/bin/ruff format src/ tests/
-
-      - name: Commit formatting fixes if needed
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-format code"
-
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    needs: pre-commit
 
     steps:
       - uses: actions/checkout@v4
@@ -60,8 +27,17 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      - name: Run Ruff linting
+        run: .venv/bin/ruff check src/ tests/
+
+      - name: Run Ruff formatting check
+        run: .venv/bin/ruff format --check src/ tests/
+
+      - name: Run type checking
+        run: .venv/bin/mypy src/
+
       - name: Run unit tests
-        run: uv run pytest tests/unit -v --cov=src --cov-report=xml --cov-report=term
+        run: .venv/bin/pytest tests/unit -v --cov=src --cov-report=xml --cov-report=term
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -74,7 +50,6 @@ jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
-    needs: pre-commit
 
     steps:
       - uses: actions/checkout@v4
@@ -93,34 +68,4 @@ jobs:
         run: uv sync
 
       - name: Run integration tests
-        run: uv run pytest tests/integration -v
-
-  code-quality:
-    name: Code Quality Checks
-    runs-on: ubuntu-latest
-    needs: pre-commit
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v2
-        with:
-          version: "latest"
-
-      - name: Install dependencies
-        run: uv sync
-
-      - name: Run linting
-        run: uv run ruff check src/ tests/
-
-      - name: Run type checking
-        run: uv run mypy src/
-
-      - name: Check formatting
-        run: uv run ruff format --check src/ tests/
+        run: .venv/bin/pytest tests/integration -v
