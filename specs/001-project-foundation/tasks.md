@@ -4,7 +4,7 @@ description: "Task list for project foundation phase"
 
 # Tasks: Project Foundation
 
-**Input**: Design documents from `/specs/001-project-foundation/`  
+**Input**: Design documents from `/specs/001-project-foundation/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories)
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story. Setup and Foundational phases must complete first before any user story work can begin.

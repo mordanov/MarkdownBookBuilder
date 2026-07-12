@@ -11,14 +11,14 @@ Establish the Markdown Book Builder project foundation with core AST data model,
 
 ## Technical Context
 
-**Language/Version**: Python 3.13  
-**Primary Dependencies**: Typer (CLI), Pydantic (validation/AST), Ruff (linting), mypy (type checking), pytest (testing)  
-**Storage**: File-based (Markdown input); configuration via TOML; no database  
-**Testing**: pytest with fixtures, snapshot tests, golden files  
-**Target Platform**: macOS, Linux, Windows (via `uv` for cross-platform support)  
-**Project Type**: CLI application + pluggable library  
-**Performance Goals**: Document discovery <1s for 100+ files; CLI --help <100ms; config load <50ms  
-**Constraints**: Deterministic builds (same input → identical output); reproducible caching strategy; Python 3.13 only  
+**Language/Version**: Python 3.13
+**Primary Dependencies**: Typer (CLI), Pydantic (validation/AST), Ruff (linting), mypy (type checking), pytest (testing)
+**Storage**: File-based (Markdown input); configuration via TOML; no database
+**Testing**: pytest with fixtures, snapshot tests, golden files
+**Target Platform**: macOS, Linux, Windows (via `uv` for cross-platform support)
+**Project Type**: CLI application + pluggable library
+**Performance Goals**: Document discovery <1s for 100+ files; CLI --help <100ms; config load <50ms
+**Constraints**: Deterministic builds (same input → identical output); reproducible caching strategy; Python 3.13 only
 **Scale/Scope**: Support 10+ chapter books initially; extensible for 1000+ page books in future phases
 
 ## Constitution Check

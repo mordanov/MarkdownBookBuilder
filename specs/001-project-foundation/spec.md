@@ -1,8 +1,8 @@
 # Feature Specification: Project Foundation
 
-**Feature Branch**: `001-project-foundation`  
-**Created**: 2026-07-12  
-**Status**: Draft  
+**Feature Branch**: `001-project-foundation`
+**Created**: 2026-07-12
+**Status**: Draft
 **Input**: Initialize Markdown Book Builder project with core architecture, AST, and CLI foundation
 
 ## User Scenarios & Testing

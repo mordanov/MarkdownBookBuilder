@@ -1,7 +1,7 @@
 # Markdown Book Builder - Implementation Guide
 
-**Project Status**: Phase 1 Bootstrap Complete ✅  
-**Current Branch**: `worktree-phase-1-bootstrap`  
+**Project Status**: Phase 1 Bootstrap Complete ✅
+**Current Branch**: `worktree-phase-1-bootstrap`
 **Date**: 2026-07-13
 
 ## Current State

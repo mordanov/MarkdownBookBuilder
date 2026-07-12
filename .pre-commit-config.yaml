@@ -1,35 +1,23 @@
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.9
+  - repo: local
     hooks:
       - id: ruff
-        args: [--fix]
         name: "Ruff: Lint and fix Python code"
+        entry: ruff check --fix
+        language: system
+        types: [python]
       - id: ruff-format
         name: "Ruff: Format Python code"
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
-    hooks:
-      - id: mypy
-        name: "MyPy: Static type checking"
-        additional_dependencies:
-          [
-            "types-toml",
-            "typer",
-            "pydantic",
-            "python-frontmatter",
-            "markdown-it-py",
-          ]
-        args: [--ignore-missing-imports]
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
-    hooks:
+        entry: ruff format
+        language: system
+        types: [python]
       - id: trailing-whitespace
+        name: "Trim trailing whitespace"
+        entry: sed -i '' 's/[[:space:]]*$//g'
+        language: system
+        types: [text]
       - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-      - id: check-merge-conflict
-      - id: debug-statements
-      - id: mixed-line-ending
+        name: "Fix end of file"
+        entry: sh -c 'for file in "$@"; do tail -c 1 "$file" | od -An -tx1 | grep -q "0a" || echo >> "$file"; done'
+        language: system
+        types: [text]

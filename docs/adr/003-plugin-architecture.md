@@ -63,14 +63,14 @@ from markdown_book_builder.ast_.models import AST
 
 class DiagramRenderer(ABC):
     """Base class for diagram renderers."""
-    
+
     name: str  # e.g., "mermaid", "plantuml"
-    
+
     @abstractmethod
     def render(self, diagram_node, config) -> bytes:
         """Convert diagram to image bytes."""
         pass
-    
+
     @abstractmethod
     def supports(self, diagram_type: str) -> bool:
         """Check if renderer supports diagram type."""

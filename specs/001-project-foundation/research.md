@@ -1,7 +1,7 @@
 # Phase 0 Research: Project Foundation Technical Decisions
 
-**Date**: 2026-07-12  
-**Status**: Complete  
+**Date**: 2026-07-12
+**Status**: Complete
 **Branch**: `001-project-foundation`
 
 ---

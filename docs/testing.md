@@ -38,7 +38,7 @@ def test_heading_model_validation():
     """Headings must have level 1-6."""
     valid = Heading(level=1, text="Title")
     assert valid.level == 1
-    
+
     with pytest.raises(ValidationError):
         Heading(level=0, text="Invalid")
 
@@ -74,10 +74,10 @@ def test_discovery_parse_roundtrip(tmp_path):
     # Create test markdown files
     (tmp_path / "01-intro.md").write_text("# Introduction\nContent here")
     (tmp_path / "02-main.md").write_text("# Main\nMore content")
-    
+
     discovered = scan_documents(tmp_path)
     ast = parse_to_ast(discovered)
-    
+
     assert len(ast.chapters) == 2
     assert ast.chapters[0].title == "Introduction"
 ```
@@ -209,10 +209,10 @@ For output validation, store expected outputs in `tests/fixtures/golden/`:
 def test_html_export_matches_golden(tmp_path):
     """HTML export matches golden file."""
     result = build_html("tests/fixtures/markdown_samples/simple", tmp_path)
-    
+
     with open("tests/fixtures/golden/simple.html") as f:
         expected = f.read()
-    
+
     assert result == expected
 ```
 
@@ -285,10 +285,10 @@ def test_config_merges_layers():
     # Arrange: Set up test data
     project_config = {"title": "Project"}
     env_config = {"output_path": "/tmp"}
-    
+
     # Act: Perform the operation
     result = merge_configs(project_config, env_config)
-    
+
     # Assert: Verify the result
     assert result["title"] == "Project"
     assert result["output_path"] == "/tmp"
@@ -326,9 +326,9 @@ def test_image_generation_api_call():
     """Image generation calls OpenAI API correctly."""
     with patch("openai.Image.create") as mock_create:
         mock_create.return_value = {"url": "http://..."}
-        
+
         result = generate_image("A diagram")
-        
+
         assert result == "http://..."
         mock_create.assert_called_once()
 ```
@@ -357,7 +357,7 @@ def test_config_loader_invalid_toml():
     """Config loader reports error for invalid TOML."""
     with pytest.raises(ConfigError) as exc_info:
         load_config("invalid: [toml")
-    
+
     assert "TOML" in str(exc_info.value)
     assert "syntax" in str(exc_info.value).lower()
 ```
@@ -388,7 +388,7 @@ def test_discovery_performance(benchmark):
     """Document discovery completes in <1 second."""
     def run():
         scan_documents("tests/fixtures/markdown_samples/")
-    
+
     result = benchmark(run)
     assert result < 1.0  # seconds
 ```
