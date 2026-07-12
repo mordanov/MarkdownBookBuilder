@@ -1,6 +1,6 @@
 """Pydantic configuration schema for TOML-based config."""
+
 from pathlib import Path
-from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -9,17 +9,17 @@ class OutputConfig(BaseModel):
     """Output format configuration."""
 
     format: str = Field(default="pdf", description="Output format (pdf, html, epub)")
-    path: Optional[str] = Field(default=None, description="Output file path")
+    path: str | None = Field(default=None, description="Output file path")
 
 
 class BookConfig(BaseModel):
     """Top-level book configuration schema."""
 
     title: str = Field(..., description="Book title")
-    author: Optional[str] = Field(default=None, description="Book author")
-    version: Optional[str] = Field(default="0.1.0", description="Book version")
+    author: str | None = Field(default=None, description="Book author")
+    version: str | None = Field(default="0.1.0", description="Book version")
     output: OutputConfig = Field(default_factory=OutputConfig, description="Output config")
-    openai_api_key: Optional[str] = Field(default=None, description="OpenAI API key")
+    openai_api_key: str | None = Field(default=None, description="OpenAI API key")
 
     class Config:
         """Pydantic config."""

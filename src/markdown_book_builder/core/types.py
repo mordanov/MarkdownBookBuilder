@@ -1,4 +1,5 @@
 """Type aliases and constants for Markdown Book Builder."""
+
 from pathlib import Path
 from typing import TypeAlias
 

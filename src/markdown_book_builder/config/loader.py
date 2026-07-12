@@ -1,5 +1,5 @@
 """Configuration loader with TOML and environment variable support."""
-import os
+
 from pathlib import Path
 from typing import Any
 

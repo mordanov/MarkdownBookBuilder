@@ -1,4 +1,5 @@
 """Command implementation stub."""
+
 from markdown_book_builder.core.logging import get_logger
 
 logger = get_logger(__name__)

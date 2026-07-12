@@ -1,4 +1,5 @@
 """Main CLI application and root commands."""
+
 import typer
 
 from markdown_book_builder.core.logging import get_logger
@@ -24,7 +25,9 @@ def main_callback(
     """Main entry point for Markdown Book Builder CLI."""
     if verbose:
         import logging
+
         from markdown_book_builder.core.logging import setup_logging
+
         setup_logging(level=logging.DEBUG)
 
 

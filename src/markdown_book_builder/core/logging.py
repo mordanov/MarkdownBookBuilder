@@ -1,7 +1,7 @@
 """Logging configuration for CLI and library usage."""
+
 import logging
 import sys
-from typing import Optional
 
 
 def setup_logging(level: int = logging.INFO, verbose: bool = False) -> None:

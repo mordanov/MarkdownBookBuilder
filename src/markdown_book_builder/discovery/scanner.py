@@ -1,6 +1,6 @@
 """File scanner for recursive Markdown discovery."""
+
 from pathlib import Path
-from typing import Optional
 
 
 def scan_directory(

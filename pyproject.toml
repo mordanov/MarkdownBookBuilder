@@ -57,13 +57,12 @@ src = ["src"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "YTT", "B", "A", "C4", "T10", "LOG", "RUF"]
-ignore = ["E501"]  # Line too long handled by formatter
+ignore = ["E501", "UP040"]  # Line too long handled by formatter; UP040 for Python 3.13 compatibility
 
 [tool.ruff.lint.isort]
 known-first-party = ["markdown_book_builder"]
 
 [tool.ruff.format]
-line-length = 100
 docstring-code-format = true
 
 [tool.mypy]

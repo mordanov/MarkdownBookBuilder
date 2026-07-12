@@ -1,5 +1,7 @@
 """AST transformation utilities."""
-from typing import Any, Callable
+
+from collections.abc import Callable
+from typing import Any
 
 from markdown_book_builder.ast_.models import Book
 

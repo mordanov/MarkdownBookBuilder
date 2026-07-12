@@ -1,4 +1,5 @@
 """Front matter parsing from Markdown files."""
+
 from typing import Any
 
 

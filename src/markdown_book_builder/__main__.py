@@ -2,7 +2,6 @@
 
 Run with: python -m markdown_book_builder
 """
-import sys
 
 from markdown_book_builder.cli.main import app
 
@@ -13,4 +12,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
