@@ -46,36 +46,37 @@ specs/[###-feature]/
 ### Source Code (repository root)
 
 ```text
-markdown_book_builder/          # Main package
-├── __init__.py
-├── __main__.py                 # Entry point: python -m markdown_book_builder
-├── ast_/                       # Core AST definitions
-│   ├── __init__.py
-│   ├── models.py               # Pydantic models (Book, Chapter, Section, Image, CodeBlock, etc.)
-│   └── transform.py            # AST transformation utilities
-├── discovery/                  # Document discovery
-│   ├── __init__.py
-│   ├── scanner.py              # Recursive file scanning + ordering
-│   └── metadata.py             # Front matter parsing
-├── cli/                        # CLI commands (Typer-based)
-│   ├── __init__.py
-│   ├── main.py                 # Main CLI app and root commands
-│   ├── build.py                # `build` command
-│   ├── validate.py             # `validate` command
-│   ├── init.py                 # `init` command
-│   ├── images.py               # `images` subcommand group
-│   └── config.py               # `config` command
-├── config/                     # Configuration system
-│   ├── __init__.py
-│   ├── models.py               # Pydantic config schema
-│   └── loader.py               # TOML loading + env var overrides
-├── core/                       # Shared utilities
-│   ├── __init__.py
-│   ├── errors.py               # Custom exceptions
-│   ├── logging.py              # Logging setup
-│   └── types.py                # Type aliases
+src/
+└── markdown_book_builder/      # Main package (src-layout convention)
+    ├── __init__.py
+    ├── __main__.py             # Entry point: python -m markdown_book_builder
+    ├── ast_/                   # Core AST definitions
+    │   ├── __init__.py
+    │   ├── models.py           # Pydantic models (Book, Chapter, Section, Image, CodeBlock, etc.)
+    │   └── transform.py        # AST transformation utilities
+    ├── discovery/              # Document discovery
+    │   ├── __init__.py
+    │   ├── scanner.py          # Recursive file scanning + ordering
+    │   └── metadata.py         # Front matter parsing
+    ├── cli/                    # CLI commands (Typer-based)
+    │   ├── __init__.py
+    │   ├── main.py             # Main CLI app and root commands
+    │   ├── build.py            # `build` command
+    │   ├── validate.py         # `validate` command
+    │   ├── init.py             # `init` command
+    │   ├── images.py           # `images` subcommand group
+    │   └── config.py           # `config` command
+    ├── config/                 # Configuration system
+    │   ├── __init__.py
+    │   ├── models.py           # Pydantic config schema
+    │   └── loader.py           # TOML loading + env var overrides
+    └── core/                   # Shared utilities
+        ├── __init__.py
+        ├── errors.py           # Custom exceptions
+        ├── logging.py          # Logging setup
+        └── types.py            # Type aliases
 
-tests/
+tests/                          # Tests at repository root
 ├── __init__.py
 ├── fixtures/                   # Reusable test fixtures
 │   ├── __init__.py

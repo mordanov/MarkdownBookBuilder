@@ -162,3 +162,16 @@ As a developer, I want a testing framework with fixtures, snapshot tests, and go
 - **Scope Boundaries**: Phase 1 does NOT include Mermaid rendering, image generation, or Typst export (these are Phase 3–4)
 - **No External Build System**: Builds are pure Python; Pandoc + Typst optional in later phases
 - **Documentation**: ADRs live in `docs/adr/` and are referenced in CLAUDE.md
+- **Project Layout**: Package lives under `src/` directory following src-layout convention: `src/markdown_book_builder/` with separate `tests/` at repo root
+
+---
+
+## Clarifications
+
+### Session 2026-07-13
+
+- Q: Package location (root-level vs src-layout)? → A: Package lives under `src/markdown_book_builder/` (src-layout convention)
+- Q: Pre-commit hook validation? → A: Add explicit task to validate pre-commit hooks execute correctly
+- Q: Coverage scope specificity? → A: T028 validates core modules only (`markdown_book_builder/{ast_,cli,discovery}`); T077 validates entire codebase
+- Q: Edge case coverage? → A: Add tests for deeply nested content (10+ heading levels) and invalid TOML error scenarios
+- Q: Sample book validation? → A: Final validation task (T078) includes end-to-end pipeline with 10+ chapter sample book

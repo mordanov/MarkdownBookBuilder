@@ -17,9 +17,9 @@ description: "Task list for project foundation phase"
 
 ## Path Conventions
 
-- Single Python package: `markdown_book_builder/` at repository root
-- Tests organized by type: `tests/unit/`, `tests/integration/`, `tests/contract/`
-- Configuration: `pyproject.toml` and `.pre-commit-config.yaml`
+- Single Python package: `src/markdown_book_builder/` (src-layout convention)
+- Tests organized by type: `tests/unit/`, `tests/integration/`, `tests/contract/` at repository root
+- Configuration: `pyproject.toml` and `.pre-commit-config.yaml` at repository root
 
 ---
 
@@ -27,7 +27,7 @@ description: "Task list for project foundation phase"
 
 **Purpose**: Project initialization, Python environment, and repository structure
 
-- [ ] T001 Create directory structure per implementation plan: `markdown_book_builder/`, `tests/`, `docs/adr/`, etc.
+- [ ] T001 Create directory structure per implementation plan: `src/markdown_book_builder/`, `tests/`, `docs/adr/`, etc.
 - [ ] T002 [P] Initialize Python project with `pyproject.toml`, `uv.lock`, and core metadata
 - [ ] T003 [P] Configure linting with Ruff: `.pre-commit-config.yaml` and tool config in `pyproject.toml`
 - [ ] T004 [P] Configure type checking with mypy in `pyproject.toml` with strict mode
@@ -43,13 +43,13 @@ description: "Task list for project foundation phase"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Define custom exception hierarchy in `markdown_book_builder/core/errors.py`
-- [ ] T009 [P] Setup logging system in `markdown_book_builder/core/logging.py` with CLI-appropriate output
-- [ ] T010 [P] Define type aliases and constants in `markdown_book_builder/core/types.py`
-- [ ] T011 Setup TOML configuration schema in `markdown_book_builder/config/models.py` (Pydantic models)
-- [ ] T012 [P] Implement configuration loader in `markdown_book_builder/config/loader.py` with env var override support
+- [ ] T008 Define custom exception hierarchy in `src/markdown_book_builder/core/errors.py`
+- [ ] T009 [P] Setup logging system in `src/markdown_book_builder/core/logging.py` with CLI-appropriate output
+- [ ] T010 [P] Define type aliases and constants in `src/markdown_book_builder/core/types.py`
+- [ ] T011 Setup TOML configuration schema in `src/markdown_book_builder/config/models.py` (Pydantic models)
+- [ ] T012 [P] Implement configuration loader in `src/markdown_book_builder/config/loader.py` with env var override support
 - [ ] T013 Create sample `book.toml` and `.book.env` templates
-- [ ] T014 Setup Typer CLI entry point in `markdown_book_builder/__main__.py`
+- [ ] T014 Setup Typer CLI entry point in `src/markdown_book_builder/__main__.py`
 - [ ] T015 [P] Create test fixtures for AST samples in `tests/fixtures/ast_samples.py`
 - [ ] T016 [P] Create test fixtures for Markdown samples in `tests/fixtures/markdown_samples.py`
 - [ ] T017 [P] Create test fixtures for config samples in `tests/fixtures/config_samples.py`
@@ -72,14 +72,14 @@ description: "Task list for project foundation phase"
 
 ### Implementation for User Story 1
 
-- [ ] T021 [P] [US1] Create `markdown_book_builder/__init__.py` with version and public API
-- [ ] T022 [US1] Implement `build` command skeleton in `markdown_book_builder/cli/build.py` (depends on T021)
-- [ ] T023 [US1] Implement `validate` command skeleton in `markdown_book_builder/cli/validate.py` (depends on T021)
-- [ ] T024 [US1] Implement `init` command skeleton in `markdown_book_builder/cli/init.py` (depends on T021)
-- [ ] T025 [US1] Implement `images` subcommand group in `markdown_book_builder/cli/images.py` (depends on T021)
-- [ ] T026 [US1] Implement `config` command in `markdown_book_builder/cli/config.py` (depends on T012, T021)
-- [ ] T027 [US1] Implement main CLI app in `markdown_book_builder/cli/main.py` that binds all commands (depends on T022-T026)
-- [ ] T028 [US1] Add success validation: running pytest passes with baseline coverage >80% on core modules
+- [ ] T021 [P] [US1] Create `src/markdown_book_builder/__init__.py` with version and public API
+- [ ] T022 [US1] Implement `build` command skeleton in `src/markdown_book_builder/cli/build.py` (depends on T021)
+- [ ] T023 [US1] Implement `validate` command skeleton in `src/markdown_book_builder/cli/validate.py` (depends on T021)
+- [ ] T024 [US1] Implement `init` command skeleton in `src/markdown_book_builder/cli/init.py` (depends on T021)
+- [ ] T025 [US1] Implement `images` subcommand group in `src/markdown_book_builder/cli/images.py` (depends on T021)
+- [ ] T026 [US1] Implement `config` command in `src/markdown_book_builder/cli/config.py` (depends on T012, T021)
+- [ ] T027 [US1] Implement main CLI app in `src/markdown_book_builder/cli/main.py` that binds all commands (depends on T022-T026)
+- [ ] T028 [US1] Add success validation: running pytest passes with baseline coverage >80% on core modules (`src/markdown_book_builder/{ast_,cli,discovery}`)
 
 **Checkpoint**: Environment is set up, CLI is functional, all tools work, developer can start development
 
@@ -95,16 +95,16 @@ description: "Task list for project foundation phase"
 
 - [ ] T029 [P] [US2] Unit tests for AST models in `tests/unit/test_ast_models.py` (verify Pydantic validation)
 - [ ] T030 [P] [US2] Snapshot test for AST serialization/deserialization in `tests/unit/test_ast_serialization.py`
-- [ ] T031 [P] [US2] Test AST transformations in `tests/unit/test_ast_transform.py` (verify tree modification without corruption)
+- [ ] T031 [P] [US2] Test AST transformations in `tests/unit/test_ast_transform.py` (verify tree modification without corruption, including deeply nested content 10+ levels)
 
 ### Implementation for User Story 2
 
-- [ ] T032 [P] [US2] Define Book, Chapter, Section, Paragraph entities in `markdown_book_builder/ast_/models.py` (Pydantic BaseModel)
-- [ ] T033 [P] [US2] Define CodeBlock and Image entities in `markdown_book_builder/ast_/models.py` (code syntax, alt text, captions)
-- [ ] T034 [P] [US2] Define FrontMatter (YAML metadata) in `markdown_book_builder/ast_/models.py`
-- [ ] T035 [US2] Implement AST utility functions in `markdown_book_builder/ast_/transform.py` (tree traversal, node queries, modification helpers)
-- [ ] T036 [US2] Implement AST serialization (to JSON/dict) in `markdown_book_builder/ast_/models.py` (depends on T032-T035)
-- [ ] T037 [US2] Implement AST deserialization (from JSON/dict) in `markdown_book_builder/ast_/models.py` with validation
+- [ ] T032 [P] [US2] Define Book, Chapter, Section, Paragraph entities in `src/markdown_book_builder/ast_/models.py` (Pydantic BaseModel)
+- [ ] T033 [P] [US2] Define CodeBlock and Image entities in `src/markdown_book_builder/ast_/models.py` (code syntax, alt text, captions)
+- [ ] T034 [P] [US2] Define FrontMatter (YAML metadata) in `src/markdown_book_builder/ast_/models.py`
+- [ ] T035 [US2] Implement AST utility functions in `src/markdown_book_builder/ast_/transform.py` (tree traversal, node queries, modification helpers)
+- [ ] T036 [US2] Implement AST serialization (to JSON/dict) in `src/markdown_book_builder/ast_/models.py` (depends on T032-T035)
+- [ ] T037 [US2] Implement AST deserialization (from JSON/dict) in `src/markdown_book_builder/ast_/models.py` with validation
 
 **Checkpoint**: AST model is stable and extensible; all downstream features can now build plugins
 
@@ -120,14 +120,14 @@ description: "Task list for project foundation phase"
 
 - [ ] T038 [P] [US3] Unit test for file scanner in `tests/unit/test_discovery_scanner.py` (lexicographic ordering, recursive traversal)
 - [ ] T039 [P] [US3] Unit test for metadata extraction in `tests/unit/test_discovery_metadata.py` (YAML front matter parsing)
-- [ ] T040 [P] [US3] Integration test for full discovery flow in `tests/integration/test_document_discovery.py`
+- [ ] T040 [P] [US3] Integration test for full discovery flow in `tests/integration/test_document_discovery.py` (including edge cases: empty files, unicode filenames)
 
 ### Implementation for User Story 3
 
-- [ ] T041 [P] [US3] Implement file scanner in `markdown_book_builder/discovery/scanner.py` (recursive traversal, lexicographic ordering, filter `.md` files)
-- [ ] T042 [P] [US3] Implement front matter parser in `markdown_book_builder/discovery/metadata.py` (YAML extraction)
-- [ ] T043 [US3] Implement discovery orchestrator in `markdown_book_builder/discovery/__init__.py` that returns ordered list with metadata (depends on T041, T042)
-- [ ] T044 [US3] Integrate discovery into CLI `build` command in `markdown_book_builder/cli/build.py` (depends on T043)
+- [ ] T041 [P] [US3] Implement file scanner in `src/markdown_book_builder/discovery/scanner.py` (recursive traversal, lexicographic ordering, filter `.md` files)
+- [ ] T042 [P] [US3] Implement front matter parser in `src/markdown_book_builder/discovery/metadata.py` (YAML extraction)
+- [ ] T043 [US3] Implement discovery orchestrator in `src/markdown_book_builder/discovery/__init__.py` that returns ordered list with metadata (depends on T041, T042)
+- [ ] T044 [US3] Integrate discovery into CLI `build` command in `src/markdown_book_builder/cli/build.py` (depends on T043)
 
 **Checkpoint**: Input pipeline is functional; system can discover and organize book content
 
@@ -148,10 +148,10 @@ description: "Task list for project foundation phase"
 
 ### Implementation for User Story 4
 
-- [ ] T049 [US4] Implement `build` command full behavior in `markdown_book_builder/cli/build.py` with progress reporting (depends on T043, T027)
-- [ ] T050 [US4] Implement `validate` command to check book structure in `markdown_book_builder/cli/validate.py` (depends on T043)
-- [ ] T051 [US4] Implement `init` command to scaffold new book projects in `markdown_book_builder/cli/init.py` (depends on T013)
-- [ ] T052 [US4] Implement `images clean` subcommand to manage image cache in `markdown_book_builder/cli/images.py`
+- [ ] T049 [US4] Implement `build` command full behavior in `src/markdown_book_builder/cli/build.py` with progress reporting (depends on T043, T027)
+- [ ] T050 [US4] Implement `validate` command to check book structure in `src/markdown_book_builder/cli/validate.py` (depends on T043)
+- [ ] T051 [US4] Implement `init` command to scaffold new book projects in `src/markdown_book_builder/cli/init.py` (depends on T013)
+- [ ] T052 [US4] Implement `images clean` subcommand to manage image cache in `src/markdown_book_builder/cli/images.py`
 - [ ] T053 [US4] Add error handling that returns non-zero exit codes and machine-readable error reports across all commands (depends on T008, T009, T049-T052)
 - [ ] T054 [US4] Verify all CLI commands support `--help` with clear documentation and respond within <100ms (depends on T049-T053)
 
@@ -167,15 +167,15 @@ description: "Task list for project foundation phase"
 
 ### Tests for User Story 5
 
-- [ ] T055 [P] [US5] Unit test for TOML loading in `tests/unit/test_config_loading.py` (valid/invalid TOML, error reporting with line numbers)
+- [ ] T055 [P] [US5] Unit test for TOML loading in `tests/unit/test_config_loading.py` (valid/invalid TOML, error reporting with line numbers, missing required fields)
 - [ ] T056 [P] [US5] Unit test for env var override behavior in `tests/unit/test_config_env_override.py` (secrets from env)
 - [ ] T057 [P] [US5] Integration test for config in build flow in `tests/integration/test_config_build_integration.py`
 
 ### Implementation for User Story 5
 
-- [ ] T058 [P] [US5] Extend config schema in `markdown_book_builder/config/models.py` with all Phase 1 settings (output format, theme hooks, API keys)
-- [ ] T059 [US5] Enhance loader to handle env var overrides in `markdown_book_builder/config/loader.py` for secrets like OPENAI_API_KEY (depends on T012, T058)
-- [ ] T060 [US5] Integrate config loading into `build` command in `markdown_book_builder/cli/build.py` to apply loaded settings (depends on T059, T049)
+- [ ] T058 [P] [US5] Extend config schema in `src/markdown_book_builder/config/models.py` with all Phase 1 settings (output format, theme hooks, API keys)
+- [ ] T059 [US5] Enhance loader to handle env var overrides in `src/markdown_book_builder/config/loader.py` for secrets like OPENAI_API_KEY (depends on T012, T058)
+- [ ] T060 [US5] Integrate config loading into `build` command in `src/markdown_book_builder/cli/build.py` to apply loaded settings (depends on T059, T049)
 - [ ] T061 [US5] Create sample book.toml template with all Phase 1 options in project root
 
 **Checkpoint**: Configuration system is fully integrated into the build pipeline
@@ -199,10 +199,18 @@ description: "Task list for project foundation phase"
 - [ ] T065 [P] [US6] Populate golden file directory `tests/fixtures/golden/` with sample outputs (CLI help text, config parsing results, AST serialization)
 - [ ] T066 [US6] Document testing best practices in `docs/testing.md` (fixtures, snapshots, golden files, pytest commands)
 - [ ] T067 [US6] Configure pytest snapshot plugin in `pyproject.toml` (syrupy or similar)
-- [ ] T068 [US6] Add pytest coverage configuration to `pyproject.toml` and verify >80% on core modules (AST, discovery, CLI)
+- [ ] T068 [US6] Add pytest coverage configuration to `pyproject.toml` and verify >80% on core modules: `src/markdown_book_builder/{ast_,cli,discovery}`
 - [ ] T069 [US6] Create pytest-watch configuration for local development in `pyproject.toml`
 
 **Checkpoint**: Complete testing infrastructure is available for all future development
+
+---
+
+## Phase 8b: Pre-Commit Validation
+
+**Purpose**: Verify code quality infrastructure works correctly before final polish
+
+- [ ] T069-precommit Validate pre-commit hooks execute correctly: run `pre-commit install && pre-commit run --all-files` and verify ruff/mypy pass (depends on T003, T004, T006)
 
 ---
 
@@ -217,8 +225,8 @@ description: "Task list for project foundation phase"
 - [ ] T074 Create TESTING.md with test running and writing guidelines
 - [ ] T075 Verify all code passes Ruff formatting and linting: `ruff check . && ruff format --check .`
 - [ ] T076 Verify all code passes mypy type checking: `mypy .`
-- [ ] T077 Verify test suite passes with coverage report: `pytest --cov`
-- [ ] T078 Final validation: Run quickstart from README.md on fresh clone (simulate new developer experience)
+- [ ] T077 Verify test suite passes with full codebase coverage report: `pytest --cov` (including tests/ directory)
+- [ ] T078 Final validation: Create sample 10+ chapter book, run full pipeline end-to-end, verify build succeeds; then run README.md quickstart on fresh clone
 
 **Checkpoint**: Project foundation is complete and ready for Phase 2 (diagram rendering, image generation, exporters)
 
