@@ -1,0 +1,22 @@
+# Markdown Book Builder Configuration Template
+# See docs/ for full documentation
+
+[book]
+title = "My Book Title"
+author = "Author Name"
+version = "0.1.0"
+description = "Brief description of your book"
+
+[output]
+# Output format: pdf, html, epub
+format = "pdf"
+# Output file path
+path = "output/book.pdf"
+
+# Optional: Theme configuration
+[theme]
+# name = "default"  # Theme name for future use
+
+# Optional: API Keys (use environment variables instead!)
+# openai_api_key = "sk-..."  # DO NOT COMMIT KEYS!
+# Use: export OPENAI_API_KEY="sk-..." instead
