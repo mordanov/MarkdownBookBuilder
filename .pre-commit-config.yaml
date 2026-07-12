@@ -11,13 +11,13 @@ repos:
         entry: ruff format
         language: system
         types: [python]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
       - id: trailing-whitespace
-        name: "Trim trailing whitespace"
-        entry: sed -i '' 's/[[:space:]]*$//g'
-        language: system
-        types: [text]
       - id: end-of-file-fixer
-        name: "Fix end of file"
-        entry: sh -c 'for file in "$@"; do tail -c 1 "$file" | od -An -tx1 | grep -q "0a" || echo >> "$file"; done'
-        language: system
-        types: [text]
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: debug-statements
