@@ -25,19 +25,14 @@ jobs:
           version: "latest"
 
       - name: Install dependencies
-        run: uv sync --all-groups
+        run: uv sync
 
-      - name: Run Ruff linting
+      - name: Run Ruff checks
         run: |
-          source .venv/bin/activate
-          ruff check src/ tests/ --fix
+          .venv/bin/ruff check src/ tests/ --fix
+          .venv/bin/ruff format src/ tests/
 
-      - name: Run Ruff formatting
-        run: |
-          source .venv/bin/activate
-          ruff format src/ tests/
-
-      - name: Commit formatting fixes
+      - name: Commit formatting fixes if needed
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
