@@ -2,6 +2,7 @@
 
 from collections.abc import Generator
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from typer.testing import CliRunner
@@ -61,16 +62,21 @@ model = "gpt-4o"
 
 def test_build_from_directory(sample_project: Path) -> None:
     """Test build command from directory."""
-    result = runner.invoke(app, ["build", str(sample_project)])
-    assert result.exit_code == 0
-    assert "Build complete" in result.stdout or "✓" in result.stdout
+    with patch("markdown_book_builder.cli.build.PandocRenderer.render") as mock_render:
+        mock_render.return_value = sample_project / "output" / "book.pdf"
+        result = runner.invoke(app, ["build", str(sample_project)])
+        assert result.exit_code == 0
+        assert "Build complete" in result.stdout
+        assert "PDF written to" in result.stdout
 
 
 def test_build_from_toml_file(sample_project: Path) -> None:
     """Test build command with explicit toml file."""
-    toml_file = sample_project / "book.toml"
-    result = runner.invoke(app, ["build", str(toml_file)])
-    assert result.exit_code == 0
+    with patch("markdown_book_builder.cli.build.PandocRenderer.render") as mock_render:
+        mock_render.return_value = sample_project / "output" / "book.pdf"
+        toml_file = sample_project / "book.toml"
+        result = runner.invoke(app, ["build", str(toml_file)])
+        assert result.exit_code == 0
 
 
 def test_build_nonexistent_path() -> None:

@@ -7,7 +7,8 @@ import typer
 from markdown_book_builder.config.loader import load_config
 from markdown_book_builder.core.errors import ConfigurationError
 from markdown_book_builder.core.logging import get_logger
-from markdown_book_builder.discovery.service import discover_book
+from markdown_book_builder.discovery.service import discover_book, discover_files
+from markdown_book_builder.rendering import PandocRenderer
 
 logger = get_logger(__name__)
 
@@ -42,12 +43,21 @@ def build(path: str = typer.Argument(".", help="Path to book project or book.tom
 
         typer.secho(f"🔍 Discovering documents in {source_dir}...", fg="cyan")
         book = discover_book(source_dir, config)
+        files = discover_files(source_dir, config)
+
+        typer.secho(f"📝 Rendering to {config.output.format.upper()}...", fg="cyan")
+        renderer = PandocRenderer()
+        if not renderer.is_available():
+            typer.secho("Error: pandoc not found on PATH", fg="red")
+            raise SystemExit(1) from None
+
+        output_path = renderer.render(files, config)
 
         typer.secho(
             f"✓ Build complete: {book.title} ({len(book.chapters)} chapters)",
             fg="green",
         )
-        logger.info(f"Output will be written to: {config.output.path}")
+        typer.secho(f"✓ PDF written to {output_path}", fg="green")
 
     except ConfigurationError as e:
         typer.secho(f"Configuration Error: {e}", fg="red")
