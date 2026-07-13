@@ -1,6 +1,5 @@
 """Tests for plugin registry."""
 
-import pytest
 
 from markdown_book_builder.plugins import (
     get_diagram_renderer,
@@ -11,9 +10,7 @@ from markdown_book_builder.plugins import (
     list_image_provider_names,
     list_renderer_names,
     register_diagram_renderer,
-    register_image_provider,
     register_renderer,
-    register_validator,
 )
 from markdown_book_builder.plugins.diagram import MermaidDiagramRenderer
 from markdown_book_builder.rendering import PandocRenderer

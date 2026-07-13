@@ -1,6 +1,5 @@
 """Tests for Pandoc PDF renderer."""
 
-import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 

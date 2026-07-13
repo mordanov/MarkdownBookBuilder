@@ -1,8 +1,6 @@
 """Tests for theme resolver."""
 
-from pathlib import Path
 
-import pytest
 
 from markdown_book_builder.themes.resolver import ThemeResolver, load_theme_css
 
