@@ -8,6 +8,7 @@ from markdown_book_builder.config.loader import load_config
 from markdown_book_builder.core.errors import ConfigurationError
 from markdown_book_builder.core.logging import get_logger
 from markdown_book_builder.discovery.service import discover_book, discover_files
+from markdown_book_builder.images.service import process_images
 from markdown_book_builder.plugins import get_renderer
 
 logger = get_logger(__name__)
@@ -44,6 +45,9 @@ def build(path: str = typer.Argument(".", help="Path to book project or book.tom
         typer.secho(f"🔍 Discovering documents in {source_dir}...", fg="cyan")
         book = discover_book(source_dir, config)
         files = discover_files(source_dir, config)
+
+        typer.secho("🖼️  Processing images...", fg="cyan")
+        book = process_images(book, config)
 
         typer.secho(f"📝 Rendering to {config.output.format.upper()}...", fg="cyan")
         renderer = get_renderer(config.output.format)

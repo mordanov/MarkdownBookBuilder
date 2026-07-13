@@ -35,6 +35,7 @@ def process_images(book: Book, config: BookConfig) -> Book:
 
             if cached_path:
                 logger.info(f"Using cached image for: {placeholder.alt_text}")
+                placeholder.node.path = cached_path
                 cached += 1
                 continue
 
@@ -51,6 +52,9 @@ def process_images(book: Book, config: BookConfig) -> Book:
 
             if image_data:
                 cache.cache_image(placeholder.alt_text, image_data)
+                cached_path = get_cached_image(placeholder.alt_text)
+                if cached_path:
+                    placeholder.node.path = cached_path
                 generated += 1
                 logger.info(f"Generated and cached: {placeholder.alt_text}")
             else:

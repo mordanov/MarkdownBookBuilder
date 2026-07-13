@@ -34,7 +34,7 @@ def generate_image(
         client = openai.OpenAI(api_key=config.api_key)
 
         response = client.images.generate(
-            model="dall-e-3",
+            model=config.image_model,
             prompt=prompt,
             size=size,
             quality="standard",

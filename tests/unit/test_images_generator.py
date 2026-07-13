@@ -1,10 +1,13 @@
 """Tests for image generation."""
 
+from unittest.mock import MagicMock, patch
+
 import pytest
 
 from markdown_book_builder.config.models import OpenAIConfig
 from markdown_book_builder.core.errors import ConfigurationError
 from markdown_book_builder.images.generator import (
+    generate_image,
     generate_placeholder_image,
 )
 
@@ -59,3 +62,131 @@ def test_generate_placeholder_invalid_config() -> None:
 
     result = generate_placeholder_image("test prompt", config)
     assert result is None
+
+
+def test_generate_image_success() -> None:
+    """Test successful image generation via OpenAI API."""
+    config = OpenAIConfig(api_key="sk-test", model="gpt-4o", image_model="dall-e-3")
+    test_image_data = b"\x89PNG\r\n\x1a\n"
+
+    import sys
+
+    mock_openai_module = MagicMock()
+    mock_client = MagicMock()
+    mock_openai_module.OpenAI.return_value = mock_client
+
+    mock_response = MagicMock()
+    mock_response.data = [MagicMock(url="https://example.com/image.png")]
+    mock_client.images.generate.return_value = mock_response
+
+    with (
+        patch.dict(sys.modules, {"openai": mock_openai_module}),
+        patch("urllib.request.urlopen") as mock_urlopen,
+    ):
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = test_image_data
+        mock_resp.__enter__.return_value = mock_resp
+        mock_urlopen.return_value = mock_resp
+
+        result = generate_image("test prompt", config)
+
+        assert result == test_image_data
+        mock_client.images.generate.assert_called_once_with(
+            model="dall-e-3",
+            prompt="test prompt",
+            size="1024x1024",
+            quality="standard",
+            n=1,
+        )
+        mock_urlopen.assert_called_once_with("https://example.com/image.png")
+
+
+def test_generate_image_uses_config_image_model() -> None:
+    """Test that image model comes from config."""
+    config = OpenAIConfig(api_key="sk-test", model="gpt-4o", image_model="dall-e-3")
+    test_image_data = b"\x89PNG\r\n\x1a\n"
+
+    import sys
+
+    mock_openai_module = MagicMock()
+    mock_client = MagicMock()
+    mock_openai_module.OpenAI.return_value = mock_client
+
+    mock_response = MagicMock()
+    mock_response.data = [MagicMock(url="https://example.com/image.png")]
+    mock_client.images.generate.return_value = mock_response
+
+    with (
+        patch.dict(sys.modules, {"openai": mock_openai_module}),
+        patch("urllib.request.urlopen") as mock_urlopen,
+    ):
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = test_image_data
+        mock_resp.__enter__.return_value = mock_resp
+        mock_urlopen.return_value = mock_resp
+
+        generate_image("test prompt", config)
+
+        call_kwargs = mock_client.images.generate.call_args[1]
+        assert call_kwargs["model"] == "dall-e-3"
+
+
+def test_generate_image_no_url_in_response() -> None:
+    """Test error handling when API returns no URL."""
+    config = OpenAIConfig(api_key="sk-test", model="gpt-4o")
+
+    import sys
+
+    mock_openai_module = MagicMock()
+    mock_client = MagicMock()
+    mock_openai_module.OpenAI.return_value = mock_client
+
+    mock_response = MagicMock()
+    mock_response.data = []
+    mock_client.images.generate.return_value = mock_response
+
+    with patch.dict(sys.modules, {"openai": mock_openai_module}):
+        with pytest.raises(ConfigurationError) as exc_info:
+            generate_image("test prompt", config)
+
+        assert "No image URL" in str(exc_info.value)
+
+
+def test_generate_image_urlopen_fails() -> None:
+    """Test error handling when image download fails."""
+    config = OpenAIConfig(api_key="sk-test", model="gpt-4o")
+
+    import sys
+
+    mock_openai_module = MagicMock()
+    mock_client = MagicMock()
+    mock_openai_module.OpenAI.return_value = mock_client
+
+    mock_response = MagicMock()
+    mock_response.data = [MagicMock(url="https://example.com/image.png")]
+    mock_client.images.generate.return_value = mock_response
+
+    with (
+        patch.dict(sys.modules, {"openai": mock_openai_module}),
+        patch("urllib.request.urlopen") as mock_urlopen,
+    ):
+        mock_urlopen.side_effect = OSError("Network error")
+
+        with pytest.raises(ConfigurationError) as exc_info:
+            generate_image("test prompt", config)
+
+        assert "generation failed" in str(exc_info.value).lower()
+
+
+def test_generate_placeholder_image_success() -> None:
+    """Test successful placeholder image generation."""
+    config = OpenAIConfig(api_key="sk-test", model="gpt-4o")
+    test_image_data = b"\x89PNG\r\n\x1a\n"
+
+    with patch("markdown_book_builder.images.generator.generate_image") as mock_gen:
+        mock_gen.return_value = test_image_data
+
+        result = generate_placeholder_image("a diagram", config)
+
+        assert result == test_image_data
+        mock_gen.assert_called_once_with("a diagram", config)

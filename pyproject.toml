@@ -29,6 +29,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+images = [
+    "openai>=1.0.0",
+]
 dev = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",

@@ -46,14 +46,35 @@ def load_builtin_plugins() -> None:
     class OpenAIImageProvider(ImageProvider):
         name = "openai"
 
+        def __init__(self) -> None:
+            from markdown_book_builder.config.models import OpenAIConfig
+            self._config = OpenAIConfig()
+
         def get_image(self, key: str) -> bytes | None:
-            # OpenAI provider doesn't fetch existing images
+            # Try to fetch from cache first
+            cache = get_cache()
+            cached_path = cache.get_cached_image(key)
+            if cached_path:
+                return cached_path.read_bytes()
             return None
 
         def put_image(self, key: str, data: bytes) -> None:
             # Store to cache
             cache = get_cache()
             cache.cache_image(key, data)
+
+        def generate(self, prompt: str, api_key: str) -> bytes | None:
+            # Generate image via OpenAI API
+            from markdown_book_builder.images.generator import generate_image
+            try:
+                if not api_key:
+                    return None
+                self._config.api_key = api_key
+                image_data = generate_image(prompt, self._config)
+                self.put_image(prompt, image_data)
+                return image_data
+            except Exception:
+                return None
 
     register_image_provider("cache", CacheImageProvider())
     register_image_provider("openai", OpenAIImageProvider())
