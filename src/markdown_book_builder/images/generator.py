@@ -58,7 +58,7 @@ def generate_image(
         # response_format only supported by dall-e models, not gpt-image-2
         if config.image_model in ("dall-e-2", "dall-e-3"):
             logger.info("📋 Using response_format=url")
-            response = client.images.generate(  # type: ignore[call-overload]
+            response = client.images.generate(  # type: ignore
                 model=config.image_model,
                 prompt=prompt,
                 size=size,
@@ -68,7 +68,7 @@ def generate_image(
             )
         else:
             logger.info("📋 Using default response format (base64)")
-            response = client.images.generate(  # type: ignore[call-overload]
+            response = client.images.generate(  # type: ignore
                 model=config.image_model,
                 prompt=prompt,
                 size=size,
