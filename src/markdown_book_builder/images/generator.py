@@ -46,23 +46,21 @@ def generate_image(
 
         logger.info("🔄 Calling images.generate()...")
 
-        # Build request params based on model
-        request_params = {
-            "model": config.image_model,
-            "prompt": prompt,
-            "size": size,
-            "n": 1,
-        }
+        # Model-specific quality parameter
+        quality_param = "standard"
+        if config.image_model in ("dall-e-2", "gpt-image-2"):
+            quality_param = "medium"
 
-        # Model-specific parameters
-        if config.image_model == "dall-e-3":
-            request_params["quality"] = "standard"
-        elif config.image_model in ("dall-e-2", "gpt-image-2"):
-            # gpt-image-2 uses 'medium' as quality param
-            request_params["quality"] = "medium"
-
-        logger.info(f"📋 Request params: model={request_params['model']}, quality={request_params.get('quality', 'N/A')}, size={size}")
-        response = client.images.generate(**request_params)
+        logger.info(
+            f"📋 Request params: model={config.image_model}, quality={quality_param}, size={size}"
+        )
+        response = client.images.generate(  # type: ignore[call-overload]
+            model=config.image_model,
+            prompt=prompt,
+            size=size,
+            quality=quality_param,
+            n=1,
+        )
 
         logger.info(f"✓ API response received: {response}")
 
