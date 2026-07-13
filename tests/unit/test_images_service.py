@@ -25,7 +25,9 @@ def book_with_images() -> Book:
                         title="Section 1",
                         children=[
                             Paragraph(children=[]),
-                            Image(path="placeholder1.png", alt_text="diagram 1", caption="A diagram"),
+                            Image(
+                                path="placeholder1.png", alt_text="diagram 1", caption="A diagram"
+                            ),
                             Paragraph(children=[]),
                             Image(path="placeholder2.png", alt_text="diagram 2", caption="Another"),
                         ],
@@ -73,7 +75,6 @@ class TestProcessImages:
 
         with (
             patch("markdown_book_builder.images.service.detect_placeholders") as mock_detect,
-            patch("markdown_book_builder.images.service.get_cache") as mock_get_cache,
             patch("markdown_book_builder.images.service.get_cached_image") as mock_cached,
             patch("markdown_book_builder.images.service.generate_placeholder_image") as mock_gen,
             patch("markdown_book_builder.images.service.get_logger"),
@@ -85,10 +86,10 @@ class TestProcessImages:
 
             mock_cached.return_value = cached_path
 
-            result = process_images(book_with_images, config)
+            process_images(book_with_images, config)
 
             mock_gen.assert_not_called()
-            assert mock_placeholder.node.path == cached_path
+            assert mock_placeholder.node.path == str(cached_path)
 
     def test_process_images_generates_new(self, book_with_images: Book, config: BookConfig) -> None:
         """New images are generated and cached."""
@@ -113,11 +114,11 @@ class TestProcessImages:
             mock_cached.side_effect = [None, cached_path]
             mock_gen.return_value = test_image_data
 
-            result = process_images(book_with_images, config)
+            process_images(book_with_images, config)
 
             mock_gen.assert_called_once_with("new diagram", config.openai)
             mock_cache.cache_image.assert_called_once_with("new diagram", test_image_data)
-            assert mock_placeholder.node.path == cached_path
+            assert mock_placeholder.node.path == str(cached_path)
 
     def test_process_images_handles_generation_failure(
         self, book_with_images: Book, config: BookConfig
@@ -167,5 +168,5 @@ class TestProcessImages:
 
             process_images(book_with_images, config)
 
-            assert ph1.node.path == cached_path1
-            assert ph2.node.path == cached_path2
+            assert ph1.node.path == str(cached_path1)
+            assert ph2.node.path == str(cached_path2)

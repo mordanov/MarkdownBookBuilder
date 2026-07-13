@@ -48,6 +48,7 @@ def load_builtin_plugins() -> None:
 
         def __init__(self) -> None:
             from markdown_book_builder.config.models import OpenAIConfig
+
             self._config = OpenAIConfig()
 
         def get_image(self, key: str) -> bytes | None:
@@ -66,6 +67,7 @@ def load_builtin_plugins() -> None:
         def generate(self, prompt: str, api_key: str) -> bytes | None:
             # Generate image via OpenAI API
             from markdown_book_builder.images.generator import generate_image
+
             try:
                 if not api_key:
                     return None

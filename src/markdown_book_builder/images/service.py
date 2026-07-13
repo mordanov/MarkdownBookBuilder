@@ -1,6 +1,6 @@
 """High-level image processing service."""
 
-from markdown_book_builder.ast_.models import Book
+from markdown_book_builder.ast_.models import Book, Image
 from markdown_book_builder.config.models import BookConfig
 from markdown_book_builder.core.logging import get_logger
 from markdown_book_builder.images.cache import get_cache, get_cached_image
@@ -35,7 +35,8 @@ def process_images(book: Book, config: BookConfig) -> Book:
 
             if cached_path:
                 logger.info(f"Using cached image for: {placeholder.alt_text}")
-                placeholder.node.path = cached_path
+                if isinstance(placeholder.node, Image):
+                    placeholder.node.path = str(cached_path)
                 cached += 1
                 continue
 
@@ -53,8 +54,8 @@ def process_images(book: Book, config: BookConfig) -> Book:
             if image_data:
                 cache.cache_image(placeholder.alt_text, image_data)
                 cached_path = get_cached_image(placeholder.alt_text)
-                if cached_path:
-                    placeholder.node.path = cached_path
+                if cached_path and isinstance(placeholder.node, Image):
+                    placeholder.node.path = str(cached_path)
                 generated += 1
                 logger.info(f"Generated and cached: {placeholder.alt_text}")
             else:

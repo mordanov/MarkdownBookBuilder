@@ -26,7 +26,7 @@ def generate_image(
         raise ConfigurationError("OpenAI API key not configured")
 
     try:
-        import openai  # type: ignore[import-not-found]
+        import openai
     except ImportError:
         raise ConfigurationError("openai library not installed. Run: pip install openai") from None
 
@@ -36,7 +36,7 @@ def generate_image(
         response = client.images.generate(
             model=config.image_model,
             prompt=prompt,
-            size=size,
+            size=size,  # type: ignore[arg-type]
             quality="standard",
             n=1,
         )
