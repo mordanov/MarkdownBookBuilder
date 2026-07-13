@@ -51,24 +51,30 @@ def generate_image(
         if config.image_model in ("dall-e-2", "gpt-image-2"):
             quality_param = "medium"
 
-        # Build request params dict - only add supported parameters for each model
-        request_kwargs = {
-            "model": config.image_model,
-            "prompt": prompt,
-            "size": size,
-            "quality": quality_param,
-            "n": 1,
-        }
+        logger.info(
+            f"📋 Request params: model={config.image_model}, quality={quality_param}, size={size}"
+        )
 
         # response_format only supported by dall-e models, not gpt-image-2
         if config.image_model in ("dall-e-2", "dall-e-3"):
-            request_kwargs["response_format"] = "url"
-
-        logger.info(
-            f"📋 Request params: model={config.image_model}, quality={quality_param}, "
-            f"response_format={'url' if config.image_model in ('dall-e-2', 'dall-e-3') else 'default'}, size={size}"
-        )
-        response = client.images.generate(**request_kwargs)  # type: ignore[call-overload]
+            logger.info("📋 Using response_format=url")
+            response = client.images.generate(  # type: ignore[call-overload]
+                model=config.image_model,
+                prompt=prompt,
+                size=size,
+                quality=quality_param,
+                response_format="url",
+                n=1,
+            )
+        else:
+            logger.info("📋 Using default response format (base64)")
+            response = client.images.generate(  # type: ignore[call-overload]
+                model=config.image_model,
+                prompt=prompt,
+                size=size,
+                quality=quality_param,
+                n=1,
+            )
 
         logger.info("✓ API response received")
         logger.info(f"📊 Response type: {type(response)}")
