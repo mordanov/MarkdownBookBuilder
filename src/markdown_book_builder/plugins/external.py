@@ -162,9 +162,7 @@ def _load_extra_plugin_module(module_path: str) -> bool:
     """
     try:
         module: ModuleType = importlib.import_module(module_path)
-        if hasattr(module, "register_plugins") and callable(
-            getattr(module, "register_plugins")
-        ):
+        if hasattr(module, "register_plugins") and callable(module.register_plugins):
             module.register_plugins(_registry)
             logger.debug("Called register_plugins() in extra plugin module: %s", module_path)
         else:
