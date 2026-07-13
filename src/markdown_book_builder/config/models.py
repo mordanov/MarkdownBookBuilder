@@ -42,6 +42,10 @@ class OutputConfig(BaseModel):
     pdf_engine: str = Field(
         default="xelatex", description="PDF engine for pandoc (xelatex, pdflatex, wkhtmltopdf)"
     )
+    font: str = Field(
+        default="Verdana",
+        description="Font for PDF output (Verdana, DejaVu Sans, Liberation Sans, etc.)",
+    )
 
 
 class BookConfig(BaseModel):
@@ -56,6 +60,10 @@ class BookConfig(BaseModel):
     openai: OpenAIConfig = Field(default_factory=OpenAIConfig, description="OpenAI configuration")
     plugins: PluginsConfig = Field(
         default_factory=PluginsConfig, description="Plugin configuration"
+    )
+    image_placeholder_format: str = Field(
+        default="markdown",
+        description="Image placeholder format: 'markdown' for ![alt](path) or 'brackets' for [ИЛЛЮСТРАЦИЯ N: description]",
     )
 
     model_config = ConfigDict(extra="ignore")

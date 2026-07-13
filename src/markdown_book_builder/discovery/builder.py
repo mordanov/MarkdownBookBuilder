@@ -12,12 +12,45 @@ from markdown_book_builder.discovery.metadata import parse_front_matter
 md = MarkdownIt()
 
 
+def _extract_bracket_images(text: str) -> list[tuple[str, str]]:
+    """Extract image placeholders in [ИЛЛЮСТРАЦИЯ N: description] format.
+
+    Args:
+        text: Text to search for image placeholders
+
+    Returns:
+        List of (placeholder_text, description) tuples
+    """
+    import re
+
+    pattern = r"\[ИЛЛЮСТРАЦИЯ\s+\d+:\s*(.+?)\]"
+    matches = re.findall(pattern, text)
+    return [(m, m) for m in matches]
+
+
 def _tokens_to_ast_children(tokens: list[Token]) -> list[Text | Image]:
     """Convert markdown tokens to AST children (Text or Image nodes)."""
     children: list[Text | Image] = []
     for token in tokens:
         if token.type == "text":
-            children.append(Text(content=token.content))
+            text_content = token.content
+            bracket_images = _extract_bracket_images(text_content)
+
+            if bracket_images:
+                import re
+
+                pattern = r"\[ИЛЛЮСТРАЦИЯ\s+\d+:\s*(.+?)\]"
+                parts = re.split(pattern, text_content)
+
+                for i, part in enumerate(parts):
+                    if i % 2 == 0:
+                        if part:
+                            children.append(Text(content=part))
+                    else:
+                        children.append(Image(path=f"image:{part}", alt_text=part))
+            else:
+                children.append(Text(content=text_content))
+
         elif token.type == "image":
             src = token.attrGet("src")
             path_str = str(src) if src is not None else ""

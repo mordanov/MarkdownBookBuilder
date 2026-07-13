@@ -20,25 +20,26 @@ class PandocRenderer(PandocBaseRenderer):
                     "-V",
                     "linestretch=1.5",
                     "--include-in-header",
-                    self._get_xelatex_preamble(),
+                    self._get_xelatex_preamble(config),
                 ]
             )
 
         return opts
 
-    def _get_xelatex_preamble(self) -> str:
+    def _get_xelatex_preamble(self, config: BookConfig) -> str:
         """Create a temporary LaTeX preamble file for xelatex Unicode support."""
         import tempfile
 
-        preamble = r"""
-\usepackage{polyglossia}
-\setmainlanguage{english}
-\setotherlanguage{russian}
-\setotherlanguage{portuguese}
-\usepackage{fontspec}
-\setmainfont{Verdana}
-\setsansfont{Verdana}
-\setmonofont{Courier New}
+        font = config.output.font
+        preamble = rf"""
+\usepackage{{polyglossia}}
+\setmainlanguage{{english}}
+\setotherlanguage{{russian}}
+\setotherlanguage{{portuguese}}
+\usepackage{{fontspec}}
+\setmainfont{{{font}}}
+\setsansfont{{{font}}}
+\setmonofont{{Courier New}}
 """
         with tempfile.NamedTemporaryFile(mode="w", suffix=".tex", delete=False) as f:
             f.write(preamble)

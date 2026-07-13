@@ -144,7 +144,42 @@ path = "output/book.pdf"
 format = "pdf"                    # pdf, html, epub, docx
 path = "output/book.pdf"          # Output file path
 pdf_engine = "xelatex"            # xelatex, pdflatex, wkhtmltopdf (PDF only)
+font = "Verdana"                  # Font for PDF output (see Font Options below)
 ```
+
+##### Font Options
+
+Configure the font used in PDF output via the `font` parameter in `[output]` section:
+
+| Font | Support | Notes |
+|------|---------|-------|
+| `Verdana` | ✅ macOS, Linux, Windows | Sans-serif, great for screen reading and Cyrillic |
+| `DejaVu Sans` | ✅ macOS, Linux | Full Unicode support, includes Cyrillic |
+| `Liberation Sans` | ✅ Linux | Alternative to Helvetica, Cyrillic support |
+| `Arial` | ✅ All platforms | Standard system font |
+| `Times New Roman` | ✅ All platforms | Serif font for traditional look |
+| `Courier New` | ✅ All platforms | Monospace font |
+| `Georgia` | ✅ macOS, Windows | Serif font with character |
+| `Segoe UI` | ✅ Windows | Modern sans-serif |
+| `Ubuntu Mono` | ✅ Linux | Ubuntu's monospace font |
+
+Example configurations:
+
+```toml
+# Latin + Cyrillic (recommended for multilingual documents)
+[output]
+font = "DejaVu Sans"
+
+# Modern sans-serif
+[output]
+font = "Liberation Sans"
+
+# Default (works on most systems)
+[output]
+font = "Verdana"
+```
+
+**Note**: The font must be installed on your system for PDF generation to work. On macOS, fonts in `/System/Library/Fonts`, `/Library/Fonts`, and `~/Library/Fonts` are available to `xelatex`.
 
 #### Theme Configuration
 
@@ -327,7 +362,13 @@ Generated images are cached automatically using SHA256 hashing:
 - **Subsequent builds**: Cached images are reused (fast!)
 - **Clear cache**: `markdown-book-builder images clean`
 
-### Image Placeholder Format
+### Image Placeholder Formats
+
+Two formats are supported for image placeholders:
+
+#### Markdown Format (Default)
+
+Standard Markdown syntax for images. When the image path starts with a URL or protocol, it's treated as a generated placeholder:
 
 ```markdown
 ![Detailed description of what you want to see]
@@ -338,6 +379,40 @@ Generated images are cached automatically using SHA256 hashing:
 # - Mention colors, style, and mood
 # - Example: "A flowchart with 3 boxes connected by arrows, 
 #   showing data flow from input to processing to output"
+```
+
+#### Bracket Format (for Cyrillic/Multilingual documents)
+
+For documents in Russian or other languages, use the bracket format:
+
+```markdown
+[ИЛЛЮСТРАЦИЯ 1: карта Европы — среднегодовая концентрация PM2.5 по странам (IQAir World Air Quality Report 2025) с выделением Испании и Португалии]
+
+[ИЛЛЮСТРАЦИЯ 2: инфографика — сравнение PM2.5 Лиссабон vs Мадрид (8,1 против более высокого показателя) — для раздела «Краткое резюме»]
+```
+
+**Format**: `[ИЛЛЮСТРАЦИЯ N: detailed description]`
+- N = any number (ignored by the system, used for reference)
+- Description = detailed prompt for image generation
+
+The system automatically:
+1. Detects the bracket format
+2. Extracts the description
+3. Generates or retrieves cached image
+4. Replaces placeholder with actual image path
+
+**Example with context**:
+
+```markdown
+# Экология
+
+## Качество воздуха
+
+[ИЛЛЮСТРАЦИЯ 1: карта Европы с цветовой шкалой концентрации PM2.5, показывающая красные зоны с высокой загрязненностью и зеленые зоны с чистым воздухом. Испания и Португалия выделены рамкой.]
+
+На этой карте видно распределение загрязнения...
+
+[ИЛЛЮСТРАЦИЯ 2: столбчатая диаграмма сравнивающая уровни PM2.5 между городами Лиссабон и Мадрид, с подписями и единицами измерения]
 ```
 
 ---
@@ -562,7 +637,7 @@ markdown-book-builder build .
 
 ### Example 3: Book with Generated Diagrams
 
-**content/chapter-architecture.md:**
+**content/chapter-architecture.md (English):**
 
 ```markdown
 # System Architecture
@@ -582,6 +657,18 @@ The system processes requests through these stages:
 ![A flowchart showing the request flow: Client → Load Balancer → 
 Authentication Service → API Gateway → Business Logic → Database. 
 Include stage labels and decision points.]
+```
+
+**content/chapter-ecology.md (Russian with bracket format):**
+
+```markdown
+# Экология Европы
+
+## Качество воздуха
+
+[ИЛЛЮСТРАЦИЯ 1: карта Европы с цветовой тепловой картой концентрации PM2.5 по странам, красные зоны показывают высокое загрязнение, зеленые зоны показывают чистый воздух. Испания и Португалия выделены рамкой для акцента.]
+
+[ИЛЛЮСТРАЦИЯ 2: групповая столбчатая диаграмма сравнения PM2.5 между Лиссабоном и Мадридом, с подписями значений и единицами измерения, профессиональный стиль.]
 ```
 
 **book.toml:**
