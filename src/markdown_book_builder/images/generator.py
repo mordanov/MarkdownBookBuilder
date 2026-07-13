@@ -2,6 +2,9 @@
 
 from markdown_book_builder.config.models import OpenAIConfig
 from markdown_book_builder.core.errors import ConfigurationError
+from markdown_book_builder.core.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def generate_image(
@@ -23,16 +26,25 @@ def generate_image(
         ConfigurationError: If API key not configured
     """
     if not config.api_key:
+        logger.error("❌ API key not configured (empty or None)")
         raise ConfigurationError("OpenAI API key not configured")
+
+    logger.info(f"🔑 Using API key: {config.api_key[:10]}...")
+    logger.info(f"🤖 Using model: {config.image_model}")
+    logger.info(f"📐 Image size: {size}")
+    logger.info(f"📝 Prompt (first 100 chars): {prompt[:100]}...")
 
     try:
         import openai
     except ImportError:
+        logger.error("❌ openai library not found")
         raise ConfigurationError("openai library not installed. Run: pip install openai") from None
 
     try:
+        logger.info("🔄 Creating OpenAI client...")
         client = openai.OpenAI(api_key=config.api_key)
 
+        logger.info("🔄 Calling images.generate()...")
         response = client.images.generate(
             model=config.image_model,
             prompt=prompt,
@@ -41,19 +53,27 @@ def generate_image(
             n=1,
         )
 
+        logger.info(f"✓ API response received: {response}")
+
         if not response.data or not response.data[0].url:
+            logger.error(f"❌ No image URL in response: {response}")
             raise ConfigurationError("No image URL in response")
 
         image_url = response.data[0].url
+        logger.info(f"✓ Image URL: {image_url}")
 
         import urllib.request
 
+        logger.info("🔄 Downloading image from URL...")
         with urllib.request.urlopen(image_url) as resp:
-            return resp.read()  # type: ignore[no-any-return]
+            image_data = resp.read()
+            logger.info(f"✓ Image downloaded successfully ({len(image_data)} bytes)")
+            return image_data  # type: ignore[no-any-return]
 
     except ConfigurationError:
         raise
     except Exception as e:
+        logger.error(f"❌ Image generation failed: {type(e).__name__}: {e}")
         raise ConfigurationError(f"Image generation failed: {e}") from e
 
 
@@ -70,7 +90,11 @@ def generate_placeholder_image(
     Returns:
         Image data or None on error
     """
+    logger.info(f"🎨 Generating placeholder image for: {alt_text[:60]}...")
     try:
-        return generate_image(alt_text, config)
-    except ConfigurationError:
+        result = generate_image(alt_text, config)
+        logger.info("✓ Placeholder image generated successfully")
+        return result
+    except ConfigurationError as e:
+        logger.error(f"❌ Failed to generate placeholder image: {e}")
         return None

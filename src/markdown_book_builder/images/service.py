@@ -25,6 +25,11 @@ def process_images(book: Book, config: BookConfig) -> Book:
     placeholders = detect_placeholders(book)
     cache = get_cache()
 
+    logger.info("=== IMAGE PROCESSING START ===")
+    logger.info(f"Total placeholders found: {len(placeholders)}")
+    logger.info(f"API Key configured: {bool(config.openai.api_key)}")
+    logger.info(f"API Key length: {len(config.openai.api_key) if config.openai.api_key else 0}")
+
     generated = 0
     cached = 0
     skipped = 0
@@ -72,8 +77,8 @@ def process_images(book: Book, config: BookConfig) -> Book:
             logger.warning(f"Failed to process image {placeholder.alt_text}: {e}")
             skipped += 1
 
-    logger.info(
-        f"Image processing complete: {generated} generated, {cached} cached, {skipped} skipped"
-    )
+    logger.info("=== IMAGE PROCESSING COMPLETE ===")
+    logger.info(f"Generated: {generated}, Cached: {cached}, Skipped: {skipped}")
+    logger.info(f"Total: {generated + cached + skipped} / {len(placeholders)}")
 
     return book

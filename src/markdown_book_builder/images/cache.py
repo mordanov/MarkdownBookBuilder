@@ -3,6 +3,10 @@
 import hashlib
 from pathlib import Path
 
+from markdown_book_builder.core.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class ImageCache:
     """File-based image cache with hash keys."""
@@ -15,6 +19,7 @@ class ImageCache:
         """
         self.cache_dir = cache_dir or Path(".cache/images")
         self.cache_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"💾 Image cache initialized at: {self.cache_dir.absolute()}")
 
     def get_hash(self, key: str) -> str:
         """Generate hash for cache key.
@@ -40,8 +45,10 @@ class ImageCache:
         image_path = self.cache_dir / f"{hash_key}.png"
 
         if image_path.exists():
+            logger.info(f"✓ Found cached image: {image_path}")
             return image_path
 
+        logger.debug(f"✗ No cached image for key: {hash_key}")
         return None
 
     def cache_image(self, key: str, image_data: bytes) -> Path:
@@ -57,6 +64,7 @@ class ImageCache:
         hash_key = self.get_hash(key)
         image_path = self.cache_dir / f"{hash_key}.png"
         image_path.write_bytes(image_data)
+        logger.info(f"💾 Cached image to: {image_path} ({len(image_data)} bytes)")
         return image_path
 
     def clear_cache(self) -> int:

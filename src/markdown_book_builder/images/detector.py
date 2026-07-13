@@ -4,6 +4,9 @@ from pydantic import BaseModel
 
 from markdown_book_builder.ast_.models import Book, Image, Section
 from markdown_book_builder.ast_.transform import traverse_ast
+from markdown_book_builder.core.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class ImagePlaceholder(BaseModel):
@@ -35,7 +38,11 @@ def detect_placeholders(book: Book) -> list[ImagePlaceholder]:
                 node=node,
             )
             placeholders.append(placeholder)
+            logger.debug(
+                f"📍 Found image placeholder: path={node.path}, alt_text={node.alt_text[:50]}..."
+            )
 
+    logger.info(f"📊 Total image placeholders detected: {len(placeholders)}")
     return placeholders
 
 
