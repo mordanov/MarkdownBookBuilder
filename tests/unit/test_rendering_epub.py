@@ -55,9 +55,10 @@ class TestEPUBRenderer:
         config.output.path = output_path
 
         renderer = EPUBRenderer()
-        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
-            "subprocess.run"
-        ) as mock_run:
+        with (
+            patch("shutil.which", return_value="/usr/bin/pandoc"),
+            patch("subprocess.run") as mock_run,
+        ):
             mock_run.return_value = MagicMock(returncode=0)
             renderer.render(sample_files, config)
 

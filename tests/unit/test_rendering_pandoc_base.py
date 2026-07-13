@@ -51,9 +51,10 @@ class TestPandocBaseRenderer:
         config.output.path = output_path
 
         renderer = PandocRenderer()
-        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
-            "subprocess.run"
-        ) as mock_run:
+        with (
+            patch("shutil.which", return_value="/usr/bin/pandoc"),
+            patch("subprocess.run") as mock_run,
+        ):
             mock_run.return_value = MagicMock(returncode=0)
             renderer.render(sample_files, config)
 
@@ -64,9 +65,10 @@ class TestPandocBaseRenderer:
         config.output.path = output_path
 
         renderer = PandocRenderer()
-        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
-            "subprocess.run"
-        ) as mock_run:
+        with (
+            patch("shutil.which", return_value="/usr/bin/pandoc"),
+            patch("subprocess.run") as mock_run,
+        ):
             mock_run.return_value = MagicMock(returncode=0)
             renderer.render(sample_files, config)
 
@@ -88,9 +90,10 @@ class TestPandocBaseRenderer:
         config.author = "Jane Doe"
 
         renderer = PandocRenderer()
-        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
-            "subprocess.run"
-        ) as mock_run:
+        with (
+            patch("shutil.which", return_value="/usr/bin/pandoc"),
+            patch("subprocess.run") as mock_run,
+        ):
             mock_run.return_value = MagicMock(returncode=0)
             renderer.render(sample_files, config)
 
@@ -101,9 +104,10 @@ class TestPandocBaseRenderer:
         from markdown_book_builder.core.errors import TransformationError
 
         renderer = PandocRenderer()
-        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
-            "subprocess.run"
-        ) as mock_run:
+        with (
+            patch("shutil.which", return_value="/usr/bin/pandoc"),
+            patch("subprocess.run") as mock_run,
+        ):
             mock_run.return_value = MagicMock(returncode=1, stderr="pandoc error")
 
             with pytest.raises(TransformationError, match="pandoc failed"):
@@ -113,8 +117,9 @@ class TestPandocBaseRenderer:
         from markdown_book_builder.core.errors import ConfigurationError
 
         renderer = PandocRenderer()
-        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
-            "subprocess.run", side_effect=FileNotFoundError
+        with (
+            patch("shutil.which", return_value="/usr/bin/pandoc"),
+            patch("subprocess.run", side_effect=FileNotFoundError),
         ):
             with pytest.raises(ConfigurationError, match="pandoc not found"):
                 renderer.render(sample_files, config)
