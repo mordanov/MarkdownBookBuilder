@@ -12,4 +12,34 @@ class PandocRenderer(PandocBaseRenderer):
 
     def _get_format_options(self, config: BookConfig) -> list[str]:
         """Add PDF-specific pandoc options."""
-        return ["--pdf-engine", config.output.pdf_engine]
+        opts = ["--pdf-engine", config.output.pdf_engine]
+
+        if config.output.pdf_engine == "xelatex":
+            opts.extend(
+                [
+                    "-V",
+                    "linestretch=1.5",
+                    "--include-in-header",
+                    self._get_xelatex_preamble(),
+                ]
+            )
+
+        return opts
+
+    def _get_xelatex_preamble(self) -> str:
+        """Create a temporary LaTeX preamble file for xelatex Unicode support."""
+        import tempfile
+
+        preamble = r"""
+\usepackage{polyglossia}
+\setmainlanguage{english}
+\setotherlanguage{russian}
+\setotherlanguage{portuguese}
+\usepackage{fontspec}
+\setmainfont{Verdana}
+\setsansfont{Verdana}
+\setmonofont{Courier New}
+"""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".tex", delete=False) as f:
+            f.write(preamble)
+            return f.name

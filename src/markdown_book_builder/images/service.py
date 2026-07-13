@@ -31,6 +31,8 @@ def process_images(book: Book, config: BookConfig) -> Book:
 
     for placeholder in placeholders:
         try:
+            is_generated_placeholder = placeholder.path.startswith("image:")
+
             cached_path = get_cached_image(placeholder.alt_text)
 
             if cached_path:
@@ -40,24 +42,29 @@ def process_images(book: Book, config: BookConfig) -> Book:
                 cached += 1
                 continue
 
-            if not config.openai.api_key:
-                logger.warning(f"Skipping image generation (no API key): {placeholder.alt_text}")
-                skipped += 1
-                continue
+            if is_generated_placeholder:
+                if not config.openai.api_key:
+                    logger.warning(
+                        f"Skipping image generation (no API key): {placeholder.alt_text}"
+                    )
+                    skipped += 1
+                    continue
 
-            logger.info(f"Generating image: {placeholder.alt_text}")
-            image_data = generate_placeholder_image(
-                placeholder.alt_text,
-                config.openai,
-            )
+                logger.info(f"Generating image: {placeholder.alt_text}")
+                image_data = generate_placeholder_image(
+                    placeholder.alt_text,
+                    config.openai,
+                )
 
-            if image_data:
-                cache.cache_image(placeholder.alt_text, image_data)
-                cached_path = get_cached_image(placeholder.alt_text)
-                if cached_path and isinstance(placeholder.node, Image):
-                    placeholder.node.path = str(cached_path)
-                generated += 1
-                logger.info(f"Generated and cached: {placeholder.alt_text}")
+                if image_data:
+                    cache.cache_image(placeholder.alt_text, image_data)
+                    cached_path = get_cached_image(placeholder.alt_text)
+                    if cached_path and isinstance(placeholder.node, Image):
+                        placeholder.node.path = str(cached_path)
+                    generated += 1
+                    logger.info(f"Generated and cached: {placeholder.alt_text}")
+                else:
+                    skipped += 1
             else:
                 skipped += 1
 
