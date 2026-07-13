@@ -44,7 +44,7 @@ def build(path: str = typer.Argument(".", help="Path to book project or book.tom
 
         typer.secho(f"🔍 Discovering documents in {source_dir}...", fg="cyan")
         book = discover_book(source_dir, config)
-        files = discover_files(source_dir, config)
+        discover_files(source_dir, config)
 
         typer.secho("🖼️  Processing images...", fg="cyan")
         book = process_images(book, config)

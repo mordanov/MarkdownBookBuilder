@@ -6,7 +6,6 @@ from abc import abstractmethod
 from pathlib import Path
 
 from markdown_book_builder.ast_.models import Book, Chapter, Image, Paragraph, Section, Text
-from markdown_book_builder.ast_.transform import traverse_ast
 from markdown_book_builder.config.models import BookConfig
 from markdown_book_builder.core.errors import ConfigurationError, TransformationError
 from markdown_book_builder.core.logging import get_logger
