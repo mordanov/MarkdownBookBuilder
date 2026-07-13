@@ -40,6 +40,7 @@ dev = [
     "syrupy>=4.0.0",
     "ruff>=0.1.0",
     "mypy>=1.5.0",
+    "types-PyYAML>=6.0.0",
     "pre-commit>=3.4.0",
 ]
 
@@ -86,6 +87,10 @@ exclude = ["tests/"]
 [[tool.mypy.overrides]]
 module = "tests.*"
 ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "openai.*"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 minversion = "7.0"
