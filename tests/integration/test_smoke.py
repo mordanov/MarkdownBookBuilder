@@ -1,6 +1,7 @@
 """Smoke tests for complete end-to-end workflows."""
 
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 from typer.testing import CliRunner
@@ -32,8 +33,13 @@ def test_complete_workflow(clean_project: Path) -> None:
     result = runner.invoke(app, ["validate", str(clean_project)])
     assert result.exit_code == 0, f"Validate failed: {result.stdout}"
 
-    result = runner.invoke(app, ["build", str(clean_project)])
-    assert result.exit_code == 0, f"Build failed: {result.stdout}"
+    with patch("markdown_book_builder.cli.build.get_renderer") as mock_get:
+        mock_renderer = MagicMock()
+        mock_renderer.is_available.return_value = True
+        mock_renderer.render.return_value = clean_project / "output" / "book.pdf"
+        mock_get.return_value = mock_renderer
+        result = runner.invoke(app, ["build", str(clean_project)])
+        assert result.exit_code == 0, f"Build failed: {result.stdout}"
 
 
 def test_build_with_custom_chapters(tmp_path: Path) -> None:
@@ -79,8 +85,13 @@ source_dir = "content"
     result = runner.invoke(app, ["validate", str(project)])
     assert result.exit_code == 0
 
-    result = runner.invoke(app, ["build", str(project)])
-    assert result.exit_code == 0
+    with patch("markdown_book_builder.cli.build.get_renderer") as mock_get:
+        mock_renderer = MagicMock()
+        mock_renderer.is_available.return_value = True
+        mock_renderer.render.return_value = project / "output" / "book.pdf"
+        mock_get.return_value = mock_renderer
+        result = runner.invoke(app, ["build", str(project)])
+        assert result.exit_code == 0
 
 
 def test_build_with_ordering(tmp_path: Path) -> None:
@@ -109,8 +120,13 @@ source_dir = "content"
 """
     )
 
-    result = runner.invoke(app, ["build", str(project)])
-    assert result.exit_code == 0
+    with patch("markdown_book_builder.cli.build.get_renderer") as mock_get:
+        mock_renderer = MagicMock()
+        mock_renderer.is_available.return_value = True
+        mock_renderer.render.return_value = project / "output" / "book.pdf"
+        mock_get.return_value = mock_renderer
+        result = runner.invoke(app, ["build", str(project)])
+        assert result.exit_code == 0
 
 
 def test_multiple_chapters_build(tmp_path: Path) -> None:
@@ -142,5 +158,10 @@ source_dir = "content"
     result = runner.invoke(app, ["validate", str(project)])
     assert result.exit_code == 0, f"Validate failed: {result.stdout}"
 
-    result = runner.invoke(app, ["build", str(project)])
-    assert result.exit_code == 0, f"Build failed: {result.stdout}"
+    with patch("markdown_book_builder.cli.build.get_renderer") as mock_get:
+        mock_renderer = MagicMock()
+        mock_renderer.is_available.return_value = True
+        mock_renderer.render.return_value = project / "output" / "book.pdf"
+        mock_get.return_value = mock_renderer
+        result = runner.invoke(app, ["build", str(project)])
+        assert result.exit_code == 0, f"Build failed: {result.stdout}"

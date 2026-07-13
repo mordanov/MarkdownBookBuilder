@@ -1,7 +1,5 @@
 """Tests for theme resolver."""
 
-
-
 from markdown_book_builder.themes.resolver import ThemeResolver, load_theme_css
 
 

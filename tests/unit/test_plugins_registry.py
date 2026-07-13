@@ -1,6 +1,5 @@
 """Tests for plugin registry."""
 
-
 from markdown_book_builder.plugins import (
     get_diagram_renderer,
     get_image_provider,
