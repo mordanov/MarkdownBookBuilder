@@ -15,10 +15,10 @@ from markdown_book_builder.core.errors import (
     ValidationError,
 )
 
-# Load built-in plugins at import time
-from markdown_book_builder.plugins.loader import load_builtin_plugins
+# Load built-in plugins and discover external plugins at import time
+from markdown_book_builder.plugins.loader import load_all_plugins
 
-load_builtin_plugins()
+load_all_plugins()
 
 __all__ = [
     "BookBuilderError",

@@ -74,6 +74,24 @@ class PluginRegistry:
         """Get all registered validators."""
         return list(self._validators)
 
+    def unregister_renderer(self, name: str) -> None:
+        """Unregister a renderer plugin by name. No-op if not registered."""
+        self._renderers.pop(name, None)
+
+    def unregister_diagram_renderer(self, name: str) -> None:
+        """Unregister a diagram renderer plugin by name. No-op if not registered."""
+        self._diagram_renderers.pop(name, None)
+
+    def unregister_image_provider(self, name: str) -> None:
+        """Unregister an image provider plugin by name. No-op if not registered."""
+        self._image_providers.pop(name, None)
+
+    def unregister_validator(self, name: str) -> None:
+        """Remove validators whose 'name' attribute matches. No-op if none match."""
+        self._validators = [
+            v for v in self._validators if getattr(v, "name", None) != name
+        ]
+
 
 # Global singleton
 _registry = PluginRegistry()
@@ -143,3 +161,23 @@ def register_validator(validator: "Validator") -> None:
 def get_validators() -> "list[Validator]":
     """Get all registered validators."""
     return _registry.get_validators()
+
+
+def unregister_renderer(name: str) -> None:
+    """Unregister a renderer plugin by name."""
+    _registry.unregister_renderer(name)
+
+
+def unregister_diagram_renderer(name: str) -> None:
+    """Unregister a diagram renderer plugin by name."""
+    _registry.unregister_diagram_renderer(name)
+
+
+def unregister_image_provider(name: str) -> None:
+    """Unregister an image provider plugin by name."""
+    _registry.unregister_image_provider(name)
+
+
+def unregister_validator(name: str) -> None:
+    """Unregister validators by name attribute."""
+    _registry.unregister_validator(name)

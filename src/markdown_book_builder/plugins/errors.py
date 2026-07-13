@@ -11,3 +11,9 @@ class PluginNotFoundError(PluginError):
     """Raised when a requested plugin is not registered."""
 
     pass
+
+
+class PluginLoadError(PluginError):
+    """Raised when a plugin fails to load or register."""
+
+    pass

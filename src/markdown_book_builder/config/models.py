@@ -20,6 +20,19 @@ class ThemeConfig(BaseModel):
     )
 
 
+class PluginsConfig(BaseModel):
+    """Plugin configuration for external and third-party plugins."""
+
+    extra_plugins: list[str] = Field(
+        default_factory=list,
+        description="Module paths to import explicitly (e.g. 'mypkg.plugin')",
+    )
+    disabled: list[str] = Field(
+        default_factory=list,
+        description="Names of built-in or externally loaded plugins to disable",
+    )
+
+
 class OutputConfig(BaseModel):
     """Output format and path configuration."""
 
@@ -40,5 +53,8 @@ class BookConfig(BaseModel):
     output: OutputConfig = Field(default_factory=OutputConfig, description="Output configuration")
     theme: ThemeConfig = Field(default_factory=ThemeConfig, description="Theme configuration")
     openai: OpenAIConfig = Field(default_factory=OpenAIConfig, description="OpenAI configuration")
+    plugins: PluginsConfig = Field(
+        default_factory=PluginsConfig, description="Plugin configuration"
+    )
 
     model_config = ConfigDict(extra="ignore")

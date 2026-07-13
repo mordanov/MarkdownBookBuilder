@@ -1,5 +1,6 @@
 """Plugin loader for built-in plugins."""
 
+from markdown_book_builder.config.models import PluginsConfig
 from markdown_book_builder.plugins.registry import (
     register_diagram_renderer,
     register_image_provider,
@@ -56,3 +57,20 @@ def load_builtin_plugins() -> None:
 
     register_image_provider("cache", CacheImageProvider())
     register_image_provider("openai", OpenAIImageProvider())
+
+
+def load_all_plugins(config: PluginsConfig | None = None) -> None:
+    """Load built-in plugins and then external plugins.
+
+    This is the primary entry point called at package import time.
+    Pass a ``PluginsConfig`` from the loaded book config to also apply
+    ``extra_plugins`` and ``disabled`` settings from ``book.toml``.
+
+    Args:
+        config: Optional plugin configuration. When ``None``, only
+                entry-point discovery runs (no extra_plugins or disabled).
+    """
+    from markdown_book_builder.plugins.external import load_external_plugins
+
+    load_builtin_plugins()
+    load_external_plugins(config)
