@@ -36,7 +36,7 @@ def generate_image(
         response = client.images.generate(
             model=config.image_model,
             prompt=prompt,
-            size=size,  # type: ignore[arg-type]
+            size=size,
             quality="standard",
             n=1,
         )
