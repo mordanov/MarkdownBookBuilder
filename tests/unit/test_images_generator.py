@@ -97,7 +97,7 @@ def test_generate_image_success() -> None:
             size="1024x1024",
             quality="standard",
             n=1,
-            response_format='url'
+            response_format="url",
         )
         mock_urlopen.assert_called_once_with("https://example.com/image.png")
 
