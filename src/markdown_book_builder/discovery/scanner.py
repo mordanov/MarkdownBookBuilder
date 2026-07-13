@@ -16,10 +16,21 @@ def scan_directory(
         sort: Sort files lexicographically
 
     Returns:
-        List of Markdown file paths
+        List of Markdown file paths (absolute paths)
 
     Raises:
         FileNotFoundError: If directory doesn't exist
     """
-    # TODO: T041 - Implement recursive scanner with ordering
-    raise NotImplementedError("Directory scanning to be implemented in Phase 5")
+    dir_path = Path(path).resolve()
+    if not dir_path.is_dir():
+        raise FileNotFoundError(f"Directory not found: {dir_path}")
+
+    if recursive:
+        files = list(dir_path.rglob("*.md"))
+    else:
+        files = list(dir_path.glob("*.md"))
+
+    if sort:
+        files.sort()
+
+    return files
