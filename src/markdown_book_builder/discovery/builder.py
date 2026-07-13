@@ -1,7 +1,6 @@
 """Build AST from discovered Markdown files."""
 
 from pathlib import Path
-from typing import Any
 
 from markdown_book_builder.ast_.models import Book, Chapter, Paragraph, Section, Text
 from markdown_book_builder.config.models import BookConfig
