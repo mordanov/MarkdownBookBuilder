@@ -97,6 +97,7 @@ def test_generate_image_success() -> None:
             size="1024x1024",
             quality="standard",
             n=1,
+            response_format='url'
         )
         mock_urlopen.assert_called_once_with("https://example.com/image.png")
 
@@ -149,7 +150,7 @@ def test_generate_image_no_url_in_response() -> None:
         with pytest.raises(ConfigurationError) as exc_info:
             generate_image("test prompt", config)
 
-        assert "No image URL" in str(exc_info.value)
+        assert "No data in image response" in str(exc_info.value)
 
 
 def test_generate_image_urlopen_fails() -> None:
