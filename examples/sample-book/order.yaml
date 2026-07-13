@@ -1,0 +1,14 @@
+# Chapter ordering for the sample book
+order:
+  - 01-introduction.md
+  - 02-getting-started.md
+  - 03-chapter3.md
+  - 04-chapter4.md
+  - 05-chapter5.md
+  - 06-chapter6.md
+  - 07-chapter7.md
+  - 08-chapter8.md
+  - 09-chapter9.md
+  - 10-chapter10.md
+  - 11-chapter11.md
+  - 12-chapter12.md

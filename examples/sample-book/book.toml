@@ -1,0 +1,12 @@
+title = "The Complete Guide to Markdown Book Builder"
+author = "Sample Author"
+version = "1.0.0"
+source_dir = "content"
+
+[output]
+format = "pdf"
+path = "output/book.pdf"
+
+[openai]
+model = "gpt-4o"
+# Set OPENAI_API_KEY environment variable for image generation
