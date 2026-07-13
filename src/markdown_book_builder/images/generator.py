@@ -59,25 +59,51 @@ def generate_image(
             prompt=prompt,
             size=size,
             quality=quality_param,
+            response_format="url",
             n=1,
         )
 
-        logger.info(f"✓ API response received: {response}")
+        logger.info("✓ API response received")
+        logger.info(f"📊 Response type: {type(response)}")
+        logger.info(f"📊 Response attributes: {dir(response)}")
+        logger.info(
+            f"📊 Response data: {response.data if hasattr(response, 'data') else 'NO DATA ATTR'}"
+        )
 
-        if not response.data or not response.data[0].url:
-            logger.error(f"❌ No image URL in response: {response}")
-            raise ConfigurationError("No image URL in response")
+        if not hasattr(response, "data") or not response.data:
+            logger.error(f"❌ No data in response. Full response: {response}")
+            raise ConfigurationError("No data in image response")
 
-        image_url = response.data[0].url
-        logger.info(f"✓ Image URL: {image_url}")
+        image_data_obj = response.data[0]
+        logger.info(
+            f"📊 Image object: url={bool(image_data_obj.url)}, b64_json={bool(image_data_obj.b64_json)}"
+        )
 
-        import urllib.request
+        # Handle both URL and base64 response formats
+        if image_data_obj.url:
+            logger.info("✓ Got URL response format")
+            image_url = image_data_obj.url
+            logger.info(f"✓ Image URL: {image_url}")
 
-        logger.info("🔄 Downloading image from URL...")
-        with urllib.request.urlopen(image_url) as resp:
-            image_data = resp.read()
-            logger.info(f"✓ Image downloaded successfully ({len(image_data)} bytes)")
-            return image_data  # type: ignore[no-any-return]
+            import urllib.request
+
+            logger.info("🔄 Downloading image from URL...")
+            with urllib.request.urlopen(image_url) as resp:
+                image_data = resp.read()
+                logger.info(f"✓ Image downloaded successfully ({len(image_data)} bytes)")
+                return image_data  # type: ignore[no-any-return]
+
+        elif image_data_obj.b64_json:
+            logger.info("✓ Got base64 response format")
+            import base64
+
+            image_data = base64.b64decode(image_data_obj.b64_json)
+            logger.info(f"✓ Decoded image: {len(image_data)} bytes")
+            return image_data
+
+        else:
+            logger.error(f"❌ No URL or base64 data in response: {image_data_obj}")
+            raise ConfigurationError("No image data in response")
 
     except ConfigurationError:
         raise
