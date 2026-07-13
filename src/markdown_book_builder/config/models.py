@@ -46,6 +46,10 @@ class OutputConfig(BaseModel):
         default="Verdana",
         description="Font for PDF output (Verdana, DejaVu Sans, Liberation Sans, etc.)",
     )
+    cache_dir: Path = Field(
+        default=Path(".cache/images"),
+        description="Directory for caching generated images (relative to project root)",
+    )
 
 
 class BookConfig(BaseModel):
