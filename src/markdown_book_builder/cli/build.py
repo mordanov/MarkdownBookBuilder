@@ -10,7 +10,7 @@ from markdown_book_builder.core.logging import get_logger
 logger = get_logger(__name__)
 
 
-def build(path: str | Path = typer.Argument(".", help="Path to book project or book.toml")) -> None:
+def build(path: str = typer.Argument(".", help="Path to book project or book.toml")) -> None:
     """Build a book from Markdown files.
 
     Discovers Markdown files, builds AST, and renders to output format.

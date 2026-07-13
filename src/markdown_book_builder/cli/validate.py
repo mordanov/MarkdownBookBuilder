@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 
 
 def validate(
-    path: str | Path = typer.Argument(".", help="Path to book project or book.toml"),
+    path: str = typer.Argument(".", help="Path to book project or book.toml"),
 ) -> None:
     """Validate book structure and configuration.
 

@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 
 
 def config(
-    path: str | Path = typer.Option("book.toml", "--path", "-p", help="Path to configuration file"),
+    path: str = typer.Option("book.toml", "--path", "-p", help="Path to configuration file"),
 ) -> None:
     """Show or validate configuration.
 
