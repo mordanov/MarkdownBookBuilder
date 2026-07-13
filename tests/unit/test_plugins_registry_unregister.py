@@ -5,7 +5,7 @@ import pytest
 from markdown_book_builder.ast_.models import Book
 from markdown_book_builder.config.models import BookConfig
 from markdown_book_builder.core.errors import ValidationError
-from markdown_book_builder.plugins.diagram import DiagramRenderer, MermaidDiagramRenderer
+from markdown_book_builder.plugins.diagram import MermaidDiagramRenderer
 from markdown_book_builder.plugins.image import ImageProvider
 from markdown_book_builder.plugins.registry import PluginRegistry
 from markdown_book_builder.plugins.validator import Validator
@@ -25,9 +25,7 @@ class TestUnregisterRenderer:
         registry.unregister_renderer("pdf-test")
         assert "pdf-test" not in registry.list_renderer_names()
 
-    def test_unregister_nonexistent_renderer_does_not_raise(
-        self, registry: PluginRegistry
-    ) -> None:
+    def test_unregister_nonexistent_renderer_does_not_raise(self, registry: PluginRegistry) -> None:
         registry.unregister_renderer("does-not-exist")
 
     def test_unregister_renderer_only_removes_named(self, registry: PluginRegistry) -> None:

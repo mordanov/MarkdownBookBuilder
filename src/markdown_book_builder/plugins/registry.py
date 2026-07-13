@@ -88,9 +88,7 @@ class PluginRegistry:
 
     def unregister_validator(self, name: str) -> None:
         """Remove validators whose 'name' attribute matches. No-op if none match."""
-        self._validators = [
-            v for v in self._validators if getattr(v, "name", None) != name
-        ]
+        self._validators = [v for v in self._validators if getattr(v, "name", None) != name]
 
 
 # Global singleton

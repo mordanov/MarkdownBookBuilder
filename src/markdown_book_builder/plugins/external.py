@@ -34,9 +34,7 @@ def _load_renderer_ep(ep):  # type: ignore[no-untyped-def]
     try:
         obj = ep.load()
         if not inspect.isclass(obj):
-            logger.warning(
-                "Renderer entry point '%s' did not return a class, skipping", ep.name
-            )
+            logger.warning("Renderer entry point '%s' did not return a class, skipping", ep.name)
             return False
         if not issubclass(obj, Renderer):
             logger.warning(
@@ -78,9 +76,7 @@ def _load_diagram_renderer_ep(ep):  # type: ignore[no-untyped-def]
         logger.debug("Registered external diagram renderer: %s", ep.name)
         return True
     except Exception as exc:
-        logger.warning(
-            "Failed to load diagram renderer entry point '%s': %s", ep.name, exc
-        )
+        logger.warning("Failed to load diagram renderer entry point '%s': %s", ep.name, exc)
         return False
 
 
@@ -93,8 +89,7 @@ def _load_image_provider_ep(ep):  # type: ignore[no-untyped-def]
         if inspect.isclass(obj):
             if not issubclass(obj, ImageProvider):
                 logger.warning(
-                    "Image provider entry point '%s' is not a subclass of "
-                    "ImageProvider, skipping",
+                    "Image provider entry point '%s' is not a subclass of ImageProvider, skipping",
                     ep.name,
                 )
                 return False
@@ -111,9 +106,7 @@ def _load_image_provider_ep(ep):  # type: ignore[no-untyped-def]
         logger.debug("Registered external image provider: %s", ep.name)
         return True
     except Exception as exc:
-        logger.warning(
-            "Failed to load image provider entry point '%s': %s", ep.name, exc
-        )
+        logger.warning("Failed to load image provider entry point '%s': %s", ep.name, exc)
         return False
 
 
@@ -134,9 +127,7 @@ def _load_validator_ep(ep):  # type: ignore[no-untyped-def]
         elif isinstance(obj, Validator):
             instance = obj
         else:
-            logger.warning(
-                "Validator entry point '%s' is not a Validator, skipping", ep.name
-            )
+            logger.warning("Validator entry point '%s' is not a Validator, skipping", ep.name)
             return False
         register_validator(instance)
         logger.debug("Registered external validator: %s", ep.name)
@@ -175,16 +166,12 @@ def _load_extra_plugin_module(module_path: str) -> bool:
             module.register_plugins  # type: ignore[attr-defined]
         ):
             module.register_plugins(_registry)  # type: ignore[attr-defined]
-            logger.debug(
-                "Called register_plugins() in extra plugin module: %s", module_path
-            )
+            logger.debug("Called register_plugins() in extra plugin module: %s", module_path)
         else:
             logger.debug("Imported extra plugin module: %s", module_path)
         return True
     except Exception as exc:
-        logger.warning(
-            "Failed to import extra plugin module '%s': %s", module_path, exc
-        )
+        logger.warning("Failed to import extra plugin module '%s': %s", module_path, exc)
         return False
 
 

@@ -3,8 +3,6 @@
 from typing import Any
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from markdown_book_builder.config.models import PluginsConfig
 from markdown_book_builder.plugins.external import load_external_plugins
 
@@ -42,9 +40,7 @@ class TestLoadRendererEntryPoint:
                 "markdown_book_builder.plugins.external.entry_points",
                 side_effect=ep_side_effect,
             ),
-            patch(
-                "markdown_book_builder.plugins.external.register_renderer"
-            ) as mock_reg,
+            patch("markdown_book_builder.plugins.external.register_renderer") as mock_reg,
         ):
             count = load_external_plugins()
 
@@ -102,9 +98,7 @@ class TestLoadDiagramRendererEntryPoint:
                 "markdown_book_builder.plugins.external.entry_points",
                 side_effect=ep_side_effect,
             ),
-            patch(
-                "markdown_book_builder.plugins.external.register_diagram_renderer"
-            ) as mock_reg,
+            patch("markdown_book_builder.plugins.external.register_diagram_renderer") as mock_reg,
         ):
             count = load_external_plugins()
 
@@ -143,9 +137,7 @@ class TestLoadDiagramRendererEntryPoint:
                 "markdown_book_builder.plugins.external.entry_points",
                 side_effect=ep_side_effect,
             ),
-            patch(
-                "markdown_book_builder.plugins.external.register_diagram_renderer"
-            ) as mock_reg,
+            patch("markdown_book_builder.plugins.external.register_diagram_renderer") as mock_reg,
         ):
             load_external_plugins()
 
@@ -178,9 +170,7 @@ class TestLoadImageProviderEntryPoint:
                 "markdown_book_builder.plugins.external.entry_points",
                 side_effect=ep_side_effect,
             ),
-            patch(
-                "markdown_book_builder.plugins.external.register_image_provider"
-            ) as mock_reg,
+            patch("markdown_book_builder.plugins.external.register_image_provider") as mock_reg,
         ):
             count = load_external_plugins()
 
@@ -216,9 +206,7 @@ class TestLoadValidatorEntryPoint:
                 "markdown_book_builder.plugins.external.entry_points",
                 side_effect=ep_side_effect,
             ),
-            patch(
-                "markdown_book_builder.plugins.external.register_validator"
-            ) as mock_reg,
+            patch("markdown_book_builder.plugins.external.register_validator") as mock_reg,
         ):
             count = load_external_plugins()
 
@@ -277,21 +265,11 @@ class TestDisabledPlugins:
         config = PluginsConfig(disabled=["mermaid"])
 
         with (
-            patch(
-                "markdown_book_builder.plugins.external.entry_points", return_value=[]
-            ),
-            patch(
-                "markdown_book_builder.plugins.external.unregister_renderer"
-            ) as mock_ur,
-            patch(
-                "markdown_book_builder.plugins.external.unregister_diagram_renderer"
-            ) as mock_udr,
-            patch(
-                "markdown_book_builder.plugins.external.unregister_image_provider"
-            ) as mock_uip,
-            patch(
-                "markdown_book_builder.plugins.external.unregister_validator"
-            ) as mock_uv,
+            patch("markdown_book_builder.plugins.external.entry_points", return_value=[]),
+            patch("markdown_book_builder.plugins.external.unregister_renderer") as mock_ur,
+            patch("markdown_book_builder.plugins.external.unregister_diagram_renderer") as mock_udr,
+            patch("markdown_book_builder.plugins.external.unregister_image_provider") as mock_uip,
+            patch("markdown_book_builder.plugins.external.unregister_validator") as mock_uv,
         ):
             load_external_plugins(config)
 
@@ -303,12 +281,8 @@ class TestDisabledPlugins:
     def test_disabled_not_applied_when_config_is_none(self) -> None:
         """With config=None, unregister functions are never called."""
         with (
-            patch(
-                "markdown_book_builder.plugins.external.entry_points", return_value=[]
-            ),
-            patch(
-                "markdown_book_builder.plugins.external.unregister_renderer"
-            ) as mock_ur,
+            patch("markdown_book_builder.plugins.external.entry_points", return_value=[]),
+            patch("markdown_book_builder.plugins.external.unregister_renderer") as mock_ur,
         ):
             load_external_plugins(None)
 
@@ -324,9 +298,7 @@ class TestExtraPlugins:
         del fake_module.register_plugins
 
         with (
-            patch(
-                "markdown_book_builder.plugins.external.entry_points", return_value=[]
-            ),
+            patch("markdown_book_builder.plugins.external.entry_points", return_value=[]),
             patch(
                 "markdown_book_builder.plugins.external.importlib.import_module",
                 return_value=fake_module,
@@ -346,9 +318,7 @@ class TestExtraPlugins:
         fake_module.register_plugins = MagicMock()
 
         with (
-            patch(
-                "markdown_book_builder.plugins.external.entry_points", return_value=[]
-            ),
+            patch("markdown_book_builder.plugins.external.entry_points", return_value=[]),
             patch(
                 "markdown_book_builder.plugins.external.importlib.import_module",
                 return_value=fake_module,
@@ -363,9 +333,7 @@ class TestExtraPlugins:
         config = PluginsConfig(extra_plugins=["nonexistent.pkg"])
 
         with (
-            patch(
-                "markdown_book_builder.plugins.external.entry_points", return_value=[]
-            ),
+            patch("markdown_book_builder.plugins.external.entry_points", return_value=[]),
             patch(
                 "markdown_book_builder.plugins.external.importlib.import_module",
                 side_effect=ModuleNotFoundError("no module named 'nonexistent'"),
@@ -379,9 +347,7 @@ class TestExtraPlugins:
 class TestReturnCount:
     def test_returns_zero_with_no_plugins(self) -> None:
         """Returns 0 when no entry points are found and no extra_plugins."""
-        with patch(
-            "markdown_book_builder.plugins.external.entry_points", return_value=[]
-        ):
+        with patch("markdown_book_builder.plugins.external.entry_points", return_value=[]):
             count = load_external_plugins()
         assert count == 0
 
