@@ -85,10 +85,6 @@ warn_incomplete_stub = true
 exclude = ["tests/"]
 
 [[tool.mypy.overrides]]
-module = "tests.*"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
 module = "openai.*"
 ignore_missing_imports = true
 
