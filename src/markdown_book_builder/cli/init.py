@@ -54,4 +54,4 @@ markdown-book-builder build .
         typer.secho(f"✓ Project initialized: {path}", fg="green")
     except Exception as e:
         typer.secho(f"Error: {e}", fg="red")
-        raise typer.Exit(1)
+        raise SystemExit(1) from None

@@ -18,7 +18,7 @@ def config(
     Displays current configuration and validates schema.
     """
     try:
-        cfg = load_config(path)
+        cfg = load_config(Path(path))
         typer.echo(f"Title: {cfg.title}")
         typer.echo(f"Author: {cfg.author}")
         typer.echo(f"Version: {cfg.version}")
@@ -29,4 +29,4 @@ def config(
         typer.secho("✓ Configuration valid", fg="green")
     except Exception as e:
         typer.secho(f"Error: {e}", fg="red")
-        raise typer.Exit(1)
+        raise SystemExit(1) from None

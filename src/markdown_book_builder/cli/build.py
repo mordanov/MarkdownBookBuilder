@@ -15,14 +15,14 @@ def build(path: str = typer.Argument(".", help="Path to book project or book.tom
 
     Discovers Markdown files, builds AST, and renders to output format.
     """
-    path = Path(path)
+    path_obj = Path(path)
 
-    if path.is_file() and path.name == "book.toml":
-        config_path = path
-    elif path.is_dir():
-        config_path = path / "book.toml"
+    if path_obj.is_file() and path_obj.name == "book.toml":
+        config_path = path_obj
+    elif path_obj.is_dir():
+        config_path = path_obj / "book.toml"
     else:
-        typer.secho(f"Error: {path} is not a valid path", fg="red")
+        typer.secho(f"Error: {path_obj} is not a valid path", fg="red")
         raise typer.Exit(1)
 
     try:
@@ -32,4 +32,4 @@ def build(path: str = typer.Argument(".", help="Path to book project or book.tom
         typer.secho(f"✓ Build complete: {config.output.path}", fg="green")
     except Exception as e:
         typer.secho(f"Error: {e}", fg="red")
-        raise typer.Exit(1)
+        raise SystemExit(1) from None

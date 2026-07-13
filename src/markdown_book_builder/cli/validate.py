@@ -17,14 +17,14 @@ def validate(
 
     Checks that all required files and configuration are valid.
     """
-    path = Path(path)
+    path_obj = Path(path)
 
-    if path.is_file() and path.name == "book.toml":
-        config_path = path
-    elif path.is_dir():
-        config_path = path / "book.toml"
+    if path_obj.is_file() and path_obj.name == "book.toml":
+        config_path = path_obj
+    elif path_obj.is_dir():
+        config_path = path_obj / "book.toml"
     else:
-        typer.secho(f"Error: {path} is not a valid path", fg="red")
+        typer.secho(f"Error: {path_obj} is not a valid path", fg="red")
         raise typer.Exit(1)
 
     try:
@@ -33,4 +33,4 @@ def validate(
         typer.secho(f"✓ Validation passed: {config.title}", fg="green")
     except Exception as e:
         typer.secho(f"✗ Validation failed: {e}", fg="red")
-        raise typer.Exit(1)
+        raise SystemExit(1) from None
