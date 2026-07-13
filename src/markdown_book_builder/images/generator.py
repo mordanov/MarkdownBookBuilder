@@ -45,13 +45,24 @@ def generate_image(
         client = openai.OpenAI(api_key=config.api_key)
 
         logger.info("🔄 Calling images.generate()...")
-        response = client.images.generate(
-            model=config.image_model,
-            prompt=prompt,
-            size=size,
-            quality="standard",
-            n=1,
-        )
+
+        # Build request params based on model
+        request_params = {
+            "model": config.image_model,
+            "prompt": prompt,
+            "size": size,
+            "n": 1,
+        }
+
+        # Model-specific parameters
+        if config.image_model == "dall-e-3":
+            request_params["quality"] = "standard"
+        elif config.image_model in ("dall-e-2", "gpt-image-2"):
+            # gpt-image-2 uses 'medium' as quality param
+            request_params["quality"] = "medium"
+
+        logger.info(f"📋 Request params: model={request_params['model']}, quality={request_params.get('quality', 'N/A')}, size={size}")
+        response = client.images.generate(**request_params)
 
         logger.info(f"✓ API response received: {response}")
 
