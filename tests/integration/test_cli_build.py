@@ -62,7 +62,7 @@ model = "gpt-4o"
 
 def test_build_from_directory(sample_project: Path) -> None:
     """Test build command from directory."""
-    with patch("markdown_book_builder.plugins.registry.get_renderer") as mock_get:
+    with patch("markdown_book_builder.cli.build.get_renderer") as mock_get:
         mock_renderer = MagicMock()
         mock_renderer.is_available.return_value = True
         mock_renderer.render.return_value = sample_project / "output" / "book.pdf"
@@ -75,7 +75,7 @@ def test_build_from_directory(sample_project: Path) -> None:
 
 def test_build_from_toml_file(sample_project: Path) -> None:
     """Test build command with explicit toml file."""
-    with patch("markdown_book_builder.plugins.registry.get_renderer") as mock_get:
+    with patch("markdown_book_builder.cli.build.get_renderer") as mock_get:
         mock_renderer = MagicMock()
         mock_renderer.is_available.return_value = True
         mock_renderer.render.return_value = sample_project / "output" / "book.pdf"
