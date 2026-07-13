@@ -2,43 +2,31 @@
 
 from pathlib import Path
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class OpenAIConfig(BaseModel):
+    """OpenAI API configuration."""
+
+    api_key: str = Field(default="", description="OpenAI API key")
+    model: str = Field(default="gpt-4o", description="OpenAI model to use")
 
 
 class OutputConfig(BaseModel):
-    """Output format configuration."""
+    """Output format and path configuration."""
 
-    format: str = Field(default="pdf", description="Output format (pdf, html, epub)")
-    path: str | None = Field(default=None, description="Output file path")
+    format: str = Field(default="pdf", description="Output format (pdf, html, epub, latex)")
+    path: Path = Field(default=Path("output/book.pdf"), description="Output file path")
 
 
 class BookConfig(BaseModel):
     """Top-level book configuration schema."""
 
     title: str = Field(..., description="Book title")
-    author: str | None = Field(default=None, description="Book author")
-    version: str | None = Field(default="0.1.0", description="Book version")
-    output: OutputConfig = Field(default_factory=OutputConfig, description="Output config")
-    openai_api_key: str | None = Field(default=None, description="OpenAI API key")
+    author: str = Field(..., description="Book author")
+    version: str = Field(default="1.0.0", description="Book version")
+    source_dir: Path = Field(default=Path("."), description="Source directory for Markdown files")
+    output: OutputConfig = Field(default_factory=OutputConfig, description="Output configuration")
+    openai: OpenAIConfig = Field(default_factory=OpenAIConfig, description="OpenAI configuration")
 
-    class Config:
-        """Pydantic config."""
-
-        extra = "allow"  # Allow additional fields
-
-
-def load_config(path: str | Path) -> BookConfig:
-    """Load configuration from TOML file.
-
-    Args:
-        path: Path to TOML config file
-
-    Returns:
-        Parsed BookConfig
-
-    Raises:
-        FileNotFoundError: If config file not found
-        ValidationError: If config is invalid
-    """
-    # TODO: T012 - Implement TOML loading with env var overrides
-    raise NotImplementedError("Config loading to be implemented in Phase 2")
+    model_config = ConfigDict(extra="ignore")

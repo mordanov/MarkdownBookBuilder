@@ -1,22 +1,30 @@
 # Markdown Book Builder Configuration Template
 # See docs/ for full documentation
 
-[book]
 title = "My Book Title"
 author = "Author Name"
-version = "0.1.0"
-description = "Brief description of your book"
+version = "1.0.0"
+
+# Source directory containing Markdown files
+source_dir = "."
 
 [output]
-# Output format: pdf, html, epub
+# Output format: pdf, html, epub, latex
 format = "pdf"
 # Output file path
 path = "output/book.pdf"
 
-# Optional: Theme configuration
-[theme]
-# name = "default"  # Theme name for future use
+[openai]
+# OpenAI configuration for image generation
+# API key: use environment variable OPENAI_API_KEY instead!
+# api_key = "sk-..."  # DO NOT COMMIT KEYS!
+model = "gpt-4o"
 
-# Optional: API Keys (use environment variables instead!)
-# openai_api_key = "sk-..."  # DO NOT COMMIT KEYS!
-# Use: export OPENAI_API_KEY="sk-..." instead
+# Environment variable overrides:
+# - BOOK_TITLE: override title
+# - BOOK_AUTHOR: override author
+# - BOOK_VERSION: override version
+# - BOOK_SOURCE_DIR: override source directory
+# - BOOK_OUTPUT__FORMAT: override output format
+# - BOOK_OUTPUT__PATH: override output path
+# - OPENAI_API_KEY: override OpenAI API key
