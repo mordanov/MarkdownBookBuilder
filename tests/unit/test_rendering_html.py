@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from markdown_book_builder.ast_.models import Book, Chapter, Paragraph, Section, Text
 from markdown_book_builder.config.models import BookConfig, OutputConfig, ThemeConfig
 from markdown_book_builder.rendering.html import HTMLRenderer
 
@@ -21,13 +22,34 @@ def config():
 
 
 @pytest.fixture
-def sample_files(tmp_path):
-    files = []
-    for i in range(2):
-        f = tmp_path / f"chapter{i}.md"
-        f.write_text(f"# Chapter {i}\n\nContent")
-        files.append(f)
-    return files
+def sample_book():
+    """Create a sample book for rendering tests."""
+    return Book(
+        title="Test Book",
+        author="Test Author",
+        chapters=[
+            Chapter(
+                title="Chapter 0",
+                children=[
+                    Section(
+                        level=2,
+                        title="Section 1",
+                        children=[Paragraph(children=[Text(content="Content 0")])],
+                    )
+                ],
+            ),
+            Chapter(
+                title="Chapter 1",
+                children=[
+                    Section(
+                        level=2,
+                        title="Section 2",
+                        children=[Paragraph(children=[Text(content="Content 1")])],
+                    )
+                ],
+            ),
+        ],
+    )
 
 
 class TestHTMLRenderer:
@@ -50,7 +72,7 @@ class TestHTMLRenderer:
         assert "--standalone" in options
         assert "--self-contained" in options
 
-    def test_render_builds_html_cmd(self, config, sample_files, tmp_path):
+    def test_render_builds_html_cmd(self, config, sample_book, tmp_path):
         output_path = tmp_path / "output" / "test.html"
         config.output.path = output_path
 
@@ -60,7 +82,7 @@ class TestHTMLRenderer:
             patch("subprocess.run") as mock_run,
         ):
             mock_run.return_value = MagicMock(returncode=0)
-            renderer.render(sample_files, config)
+            renderer.render(sample_book, config)
 
             cmd = mock_run.call_args[0][0]
 

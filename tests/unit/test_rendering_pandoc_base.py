@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from markdown_book_builder.ast_.models import Book, Chapter, Paragraph, Section, Text
 from markdown_book_builder.config.models import BookConfig, OutputConfig, ThemeConfig
 from markdown_book_builder.rendering.pandoc import PandocRenderer
 
@@ -26,13 +27,34 @@ def config():
 
 
 @pytest.fixture
-def sample_files(tmp_path):
-    files = []
-    for i in range(2):
-        f = tmp_path / f"chapter{i}.md"
-        f.write_text(f"# Chapter {i}\n\nContent")
-        files.append(f)
-    return files
+def sample_book():
+    """Create a sample book for rendering tests."""
+    return Book(
+        title="Test Book",
+        author="Test Author",
+        chapters=[
+            Chapter(
+                title="Chapter 0",
+                children=[
+                    Section(
+                        level=2,
+                        title="Section 1",
+                        children=[Paragraph(children=[Text(content="Content 0")])],
+                    )
+                ],
+            ),
+            Chapter(
+                title="Chapter 1",
+                children=[
+                    Section(
+                        level=2,
+                        title="Section 2",
+                        children=[Paragraph(children=[Text(content="Content 1")])],
+                    )
+                ],
+            ),
+        ],
+    )
 
 
 class TestPandocBaseRenderer:
@@ -46,7 +68,7 @@ class TestPandocBaseRenderer:
             renderer = PandocRenderer()
             assert renderer.is_available() is False
 
-    def test_render_creates_output_directory(self, config, sample_files, tmp_path):
+    def test_render_creates_output_directory(self, config, sample_book, tmp_path):
         output_path = tmp_path / "deep" / "nested" / "output" / "test.pdf"
         config.output.path = output_path
 
@@ -56,11 +78,11 @@ class TestPandocBaseRenderer:
             patch("subprocess.run") as mock_run,
         ):
             mock_run.return_value = MagicMock(returncode=0)
-            renderer.render(sample_files, config)
+            renderer.render(sample_book, config)
 
             assert output_path.parent.exists()
 
-    def test_render_builds_pandoc_cmd(self, config, sample_files, tmp_path):
+    def test_render_builds_pandoc_cmd(self, config, sample_book, tmp_path):
         output_path = tmp_path / "output" / "test.pdf"
         config.output.path = output_path
 
@@ -70,7 +92,7 @@ class TestPandocBaseRenderer:
             patch("subprocess.run") as mock_run,
         ):
             mock_run.return_value = MagicMock(returncode=0)
-            renderer.render(sample_files, config)
+            renderer.render(sample_book, config)
 
             # Verify command was called
             mock_run.assert_called_once()
@@ -84,7 +106,7 @@ class TestPandocBaseRenderer:
             assert "--toc" in cmd
             assert f"title={config.title}" in cmd
 
-    def test_render_includes_author_metadata(self, config, sample_files, tmp_path):
+    def test_render_includes_author_metadata(self, config, sample_book, tmp_path):
         output_path = tmp_path / "output" / "test.pdf"
         config.output.path = output_path
         config.author = "Jane Doe"
@@ -95,12 +117,12 @@ class TestPandocBaseRenderer:
             patch("subprocess.run") as mock_run,
         ):
             mock_run.return_value = MagicMock(returncode=0)
-            renderer.render(sample_files, config)
+            renderer.render(sample_book, config)
 
             cmd = mock_run.call_args[0][0]
             assert "author=Jane Doe" in cmd or "Jane Doe" in cmd
 
-    def test_render_pandoc_failure(self, renderer, config, sample_files):
+    def test_render_pandoc_failure(self, renderer, config, sample_book):
         from markdown_book_builder.core.errors import TransformationError
 
         renderer = PandocRenderer()
@@ -111,9 +133,9 @@ class TestPandocBaseRenderer:
             mock_run.return_value = MagicMock(returncode=1, stderr="pandoc error")
 
             with pytest.raises(TransformationError, match="pandoc failed"):
-                renderer.render(sample_files, config)
+                renderer.render(sample_book, config)
 
-    def test_render_pandoc_not_found(self, config, sample_files):
+    def test_render_pandoc_not_found(self, config, sample_book):
         from markdown_book_builder.core.errors import ConfigurationError
 
         renderer = PandocRenderer()
@@ -122,7 +144,7 @@ class TestPandocBaseRenderer:
             patch("subprocess.run", side_effect=FileNotFoundError),
         ):
             with pytest.raises(ConfigurationError, match="pandoc not found"):
-                renderer.render(sample_files, config)
+                renderer.render(sample_book, config)
 
     def test_resolve_output_path_pdf_extension(self, config):
         renderer = PandocRenderer()

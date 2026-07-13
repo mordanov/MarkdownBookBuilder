@@ -75,16 +75,19 @@ class TestProcessImages:
 
         with (
             patch("markdown_book_builder.images.service.detect_placeholders") as mock_detect,
-            patch("markdown_book_builder.images.service.get_cached_image") as mock_cached,
+            patch("markdown_book_builder.images.service.ImageIndex") as mock_index_class,
             patch("markdown_book_builder.images.service.generate_placeholder_image") as mock_gen,
             patch("markdown_book_builder.images.service.get_logger"),
         ):
             mock_placeholder = MagicMock()
             mock_placeholder.alt_text = "diagram 1"
             mock_placeholder.node = test_image_node
+            mock_placeholder.path = "image:diagram 1"
             mock_detect.return_value = [mock_placeholder]
 
-            mock_cached.return_value = cached_path
+            mock_index = MagicMock()
+            mock_index.get.return_value = cached_path
+            mock_index_class.return_value = mock_index
 
             process_images(book_with_images, config)
 
@@ -98,26 +101,29 @@ class TestProcessImages:
 
         with (
             patch("markdown_book_builder.images.service.detect_placeholders") as mock_detect,
-            patch("markdown_book_builder.images.service.get_cache") as mock_get_cache,
-            patch("markdown_book_builder.images.service.get_cached_image") as mock_cached,
+            patch("markdown_book_builder.images.service.ImageIndex") as mock_index_class,
             patch("markdown_book_builder.images.service.generate_placeholder_image") as mock_gen,
+            patch("markdown_book_builder.images.service._save_image") as mock_save,
             patch("markdown_book_builder.images.service.get_logger"),
         ):
             mock_placeholder = MagicMock()
             mock_placeholder.alt_text = "new diagram"
-            mock_placeholder.node = Image(path="new.png", alt_text="new diagram", caption="New")
+            mock_placeholder.node = Image(path="image:new diagram", alt_text="new diagram", caption="New")
+            mock_placeholder.path = "image:new diagram"
             mock_detect.return_value = [mock_placeholder]
 
-            mock_cache = MagicMock()
-            mock_get_cache.return_value = mock_cache
+            mock_index = MagicMock()
+            mock_index.get.return_value = None
+            mock_index_class.return_value = mock_index
 
-            mock_cached.side_effect = [None, cached_path]
             mock_gen.return_value = test_image_data
+            mock_save.return_value = cached_path
 
             process_images(book_with_images, config)
 
             mock_gen.assert_called_once_with("new diagram", config.openai)
-            mock_cache.cache_image.assert_called_once_with("new diagram", test_image_data)
+            mock_save.assert_called_once()
+            mock_index.set.assert_called_once()
             assert mock_placeholder.node.path == str(cached_path)
 
     def test_process_images_handles_generation_failure(
@@ -126,21 +132,26 @@ class TestProcessImages:
         """Generation failures are handled gracefully."""
         with (
             patch("markdown_book_builder.images.service.detect_placeholders") as mock_detect,
-            patch("markdown_book_builder.images.service.get_cached_image") as mock_cached,
+            patch("markdown_book_builder.images.service.ImageIndex") as mock_index_class,
             patch("markdown_book_builder.images.service.generate_placeholder_image") as mock_gen,
             patch("markdown_book_builder.images.service.get_logger"),
         ):
             mock_placeholder = MagicMock()
             mock_placeholder.alt_text = "bad diagram"
-            mock_placeholder.node = Image(path="bad.png", alt_text="bad", caption="Bad")
+            mock_placeholder.node = Image(path="image:bad", alt_text="bad", caption="Bad")
+            mock_placeholder.path = "image:bad"
             mock_detect.return_value = [mock_placeholder]
 
-            mock_cached.return_value = None
-            mock_gen.side_effect = Exception("API error")
+            mock_index = MagicMock()
+            mock_index.get.return_value = None
+            mock_index_class.return_value = mock_index
+
+            mock_gen.return_value = None
 
             result = process_images(book_with_images, config)
 
             assert result is book_with_images
+            assert mock_placeholder.node.path == ""
 
     def test_process_images_updates_all_placeholders(
         self, book_with_images: Book, config: BookConfig
@@ -152,19 +163,24 @@ class TestProcessImages:
 
         with (
             patch("markdown_book_builder.images.service.detect_placeholders") as mock_detect,
-            patch("markdown_book_builder.images.service.get_cached_image") as mock_cached,
+            patch("markdown_book_builder.images.service.ImageIndex") as mock_index_class,
             patch("markdown_book_builder.images.service.get_logger"),
         ):
             ph1 = MagicMock()
             ph1.alt_text = "diagram 1"
             ph1.node = test_section.children[1]
+            ph1.path = "image:diagram 1"
 
             ph2 = MagicMock()
             ph2.alt_text = "diagram 2"
             ph2.node = test_section.children[3]
+            ph2.path = "image:diagram 2"
 
             mock_detect.return_value = [ph1, ph2]
-            mock_cached.side_effect = [cached_path1, cached_path2]
+
+            mock_index = MagicMock()
+            mock_index.get.side_effect = [cached_path1, cached_path2]
+            mock_index_class.return_value = mock_index
 
             process_images(book_with_images, config)
 
