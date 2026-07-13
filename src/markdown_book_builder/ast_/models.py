@@ -6,21 +6,18 @@ All book content is represented as an AST that plugins and transformations opera
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class FrontMatter(BaseModel):
     """YAML front matter metadata."""
 
+    model_config = ConfigDict(extra="allow")
+
     title: str | None = Field(default=None, description="Title")
     author: str | None = Field(default=None, description="Author")
     date: str | None = Field(default=None, description="Date in ISO format")
     extra: dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
-
-    class Config:
-        """Pydantic config."""
-
-        extra = "allow"
 
 
 class Text(BaseModel):

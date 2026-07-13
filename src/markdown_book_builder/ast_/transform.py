@@ -1,7 +1,7 @@
 """AST transformation utilities."""
 
 from collections.abc import Generator
-from typing import Any
+from typing import Any, cast
 
 from markdown_book_builder.ast_.models import (
     Book,
@@ -32,8 +32,8 @@ def traverse_ast(node: Any) -> Generator[Any]:
         for child in node.children:
             yield from traverse_ast(child)
     elif isinstance(node, Paragraph):
-        for child in node.children:
-            yield from traverse_ast(child)  # type: ignore[arg-type,union-attr]
+        for child in node.children:  # type: ignore[assignment]
+            yield from traverse_ast(cast(Any, child))
 
 
 def find_all_sections(book: Book) -> list[Section]:

@@ -49,8 +49,6 @@ def test_ast_roundtrip_complex() -> None:
 
 def test_ast_to_dict() -> None:
     """Test AST converts to dict correctly."""
-    text = Text(content="Test")
-    para = Paragraph(children=[text])
     book = Book(title="Book", author="Author")
 
     data = book.model_dump()
@@ -61,7 +59,6 @@ def test_ast_to_dict() -> None:
 
 def test_ast_to_json() -> None:
     """Test AST converts to JSON correctly."""
-    text = Text(content="Test")
     book = Book(title="Book", author="Author")
 
     json_str = book.model_dump_json()
