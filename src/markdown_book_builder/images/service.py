@@ -52,6 +52,8 @@ def process_images(book: Book, config: BookConfig) -> Book:
                     logger.warning(
                         f"Skipping image generation (no API key): {placeholder.alt_text}"
                     )
+                    if isinstance(placeholder.node, Image):
+                        placeholder.node.path = ""
                     skipped += 1
                     continue
 
@@ -69,12 +71,16 @@ def process_images(book: Book, config: BookConfig) -> Book:
                     generated += 1
                     logger.info(f"Generated and cached: {placeholder.alt_text}")
                 else:
+                    if isinstance(placeholder.node, Image):
+                        placeholder.node.path = ""
                     skipped += 1
             else:
                 skipped += 1
 
         except Exception as e:
             logger.warning(f"Failed to process image {placeholder.alt_text}: {e}")
+            if isinstance(placeholder.node, Image):
+                placeholder.node.path = ""
             skipped += 1
 
     logger.info("=== IMAGE PROCESSING COMPLETE ===")
