@@ -1,5 +1,7 @@
 """Image generation via OpenAI API."""
 
+from typing import Literal
+
 from markdown_book_builder.config.models import OpenAIConfig
 from markdown_book_builder.core.errors import ConfigurationError
 from markdown_book_builder.core.logging import get_logger
@@ -47,7 +49,7 @@ def generate_image(
         logger.info("🔄 Calling images.generate()...")
 
         # Model-specific parameters
-        quality_param = "standard"
+        quality_param: Literal["standard", "medium"] = "standard"
         if config.image_model in ("dall-e-2", "gpt-image-2"):
             quality_param = "medium"
 
@@ -58,7 +60,7 @@ def generate_image(
         # response_format only supported by dall-e models, not gpt-image-2
         if config.image_model in ("dall-e-2", "dall-e-3"):
             logger.info("📋 Using response_format=url")
-            response = client.images.generate(  # type: ignore
+            response = client.images.generate(
                 model=config.image_model,
                 prompt=prompt,
                 size=size,
@@ -68,7 +70,7 @@ def generate_image(
             )
         else:
             logger.info("📋 Using default response format (base64)")
-            response = client.images.generate(  # type: ignore
+            response = client.images.generate(
                 model=config.image_model,
                 prompt=prompt,
                 size=size,
