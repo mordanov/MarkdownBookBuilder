@@ -34,9 +34,7 @@ def load_order_config(path: Path) -> list[str]:
         raise ValueError(f"Invalid YAML in order file: {e}") from e
 
 
-def sort_chapters(
-    files: list[Path], order: list[str] | None = None
-) -> list[Path]:
+def sort_chapters(files: list[Path], order: list[str] | None = None) -> list[Path]:
     """Sort files according to order config or alphabetically.
 
     Args:

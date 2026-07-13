@@ -33,9 +33,7 @@ def discover_book(source_dir: Path | str, config: BookConfig) -> Book:
         files = scan_directory(source_path, recursive=True)
 
         if not files:
-            raise ConfigurationError(
-                f"No Markdown files found in {source_path}"
-            )
+            raise ConfigurationError(f"No Markdown files found in {source_path}")
 
         order_file = source_path / "order.yaml"
         order = []
