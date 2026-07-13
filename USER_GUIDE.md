@@ -100,8 +100,10 @@ my-book/
 │   ├── book.pdf
 │   ├── book.html
 │   └── book.epub
-└── .mbb-cache/               # (Auto-created) Image cache
-    └── abc123def456.png
+└── .cache/images/            # Image cache (configurable)
+    ├── index.json            # JSON key-value index
+    ├── abc123def456.png      # Generated images (hash-named)
+    └── xyz789abc123.png
 ```
 
 ### Minimal `book.toml`
@@ -145,7 +147,41 @@ format = "pdf"                    # pdf, html, epub, docx
 path = "output/book.pdf"          # Output file path
 pdf_engine = "xelatex"            # xelatex, pdflatex, wkhtmltopdf (PDF only)
 font = "Verdana"                  # Font for PDF output (see Font Options below)
+cache_dir = ".cache/images"       # Cache directory for generated images
 ```
+
+##### Image Cache Configuration
+
+The `cache_dir` parameter controls where generated images are stored:
+
+```toml
+# Default: stored in .cache/images/ (project relative)
+[output]
+cache_dir = ".cache/images"
+
+# Alternative: custom cache location
+[output]
+cache_dir = ".book-images"
+
+# Or absolute path
+[output]
+cache_dir = "/var/cache/my-book-images"
+```
+
+**Cache structure:**
+```
+.cache/images/
+├── index.json               # JSON index mapping prompts to files
+├── abc123def456.png        # Generated image (hash-named for deduplication)
+└── xyz789abc123.png        # Another generated image
+```
+
+**Key features:**
+- **Transparent storage**: JSON index shows which images are cached
+- **Persistent**: Images survive failed builds and rendering errors
+- **Deduplicated**: Same prompt = same image (reused, not regenerated)
+- **Portable**: Share cache with team via version control
+- **No image loss**: Images saved immediately after generation, before render
 
 ##### Font Options
 
@@ -356,11 +392,46 @@ Here's a generated diagram:
 
 ### Image Caching
 
-Generated images are cached automatically using SHA256 hashing:
+Generated images are cached automatically in your project directory:
 
-- **First build**: Images are generated via OpenAI API
-- **Subsequent builds**: Cached images are reused (fast!)
-- **Clear cache**: `markdown-book-builder images clean`
+**How it works:**
+1. **First build**: Images are generated via OpenAI API
+   - Saved immediately to `.cache/images/` directory
+   - Indexed in `index.json` for quick lookup
+   - Persists even if render fails
+
+2. **Subsequent builds**: Cached images are reused (fast!)
+   - Same prompt hash = same cached image
+   - No API calls needed
+   - Dramatically faster builds
+
+3. **Cache location**: Configurable in `book.toml`
+   ```toml
+   [output]
+   cache_dir = ".cache/images"    # Default, relative to project
+   ```
+
+4. **Cache inspection**:
+   ```bash
+   # View what's cached
+   cat .cache/images/index.json
+   
+   # List all cached images
+   ls -lah .cache/images/
+   ```
+
+5. **Clear cache** (if needed):
+   ```bash
+   rm -rf .cache/images/
+   markdown-book-builder build .  # Regenerate from scratch
+   ```
+
+**Benefits:**
+- ✅ Images never lost (saved immediately, before render)
+- ✅ Visible in project (not in hidden system temp folders)
+- ✅ Human-readable index (JSON key-value store)
+- ✅ Shareable with team (include `.cache/images/` in git)
+- ✅ Fast rebuilds (cached images reused)
 
 ### Image Placeholder Formats
 
