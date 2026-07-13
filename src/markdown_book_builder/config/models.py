@@ -15,7 +15,9 @@ class OpenAIConfig(BaseModel):
 class ThemeConfig(BaseModel):
     """Theme configuration for output styling."""
 
-    name: str = Field(default="default", description="Theme name (default, dark, minimal) or path to CSS file")
+    name: str = Field(
+        default="default", description="Theme name (default, dark, minimal) or path to CSS file"
+    )
 
 
 class OutputConfig(BaseModel):

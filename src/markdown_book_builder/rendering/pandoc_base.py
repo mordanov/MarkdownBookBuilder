@@ -58,7 +58,9 @@ class PandocBaseRenderer(Renderer):
         """Default file extension for this format (e.g., '.pdf')."""
         pass
 
-    def _build_pandoc_cmd(self, files: list[Path], output_path: Path, config: BookConfig) -> list[str]:
+    def _build_pandoc_cmd(
+        self, files: list[Path], output_path: Path, config: BookConfig
+    ) -> list[str]:
         """Build the pandoc command line."""
         cmd = [
             "pandoc",
