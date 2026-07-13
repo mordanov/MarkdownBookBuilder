@@ -100,6 +100,7 @@ def test_global_cache_functions(tmp_path: Path) -> None:
     """Test global cache functions."""
     test_cache = ImageCache(tmp_path / "test_cache")
     import markdown_book_builder.images.cache as cache_module
+
     cache_module._cache = test_cache
 
     key = "test_key"

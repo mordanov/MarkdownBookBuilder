@@ -40,9 +40,7 @@ def render_mermaid(diagram_code: str, output_format: str = "svg") -> str | None:
             )
 
             if result.returncode != 0:
-                raise ConfigurationError(
-                    f"Mermaid rendering failed: {result.stderr.decode()}"
-                )
+                raise ConfigurationError(f"Mermaid rendering failed: {result.stderr.decode()}")
 
             if output_file.exists():
                 content = output_file.read_text()

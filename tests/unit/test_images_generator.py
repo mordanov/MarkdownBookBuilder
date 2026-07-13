@@ -15,6 +15,7 @@ def test_generate_image_no_api_key() -> None:
 
     with pytest.raises(ConfigurationError) as exc_info:
         from markdown_book_builder.images.generator import generate_image
+
         generate_image("test prompt", config)
 
     assert "API key" in str(exc_info.value)
@@ -33,6 +34,7 @@ def test_generate_image_no_openai_library() -> None:
     config = OpenAIConfig(api_key="sk-test", model="gpt-4o")
 
     import sys
+
     openai_module = sys.modules.get("openai")
 
     try:

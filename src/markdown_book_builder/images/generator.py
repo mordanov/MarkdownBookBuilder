@@ -28,9 +28,7 @@ def generate_image(
     try:
         import openai  # type: ignore[import-not-found]
     except ImportError:
-        raise ConfigurationError(
-            "openai library not installed. Run: pip install openai"
-        ) from None
+        raise ConfigurationError("openai library not installed. Run: pip install openai") from None
 
     try:
         client = openai.OpenAI(api_key=config.api_key)

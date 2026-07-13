@@ -39,9 +39,7 @@ def process_images(book: Book, config: BookConfig) -> Book:
                 continue
 
             if not config.openai.api_key:
-                logger.warning(
-                    f"Skipping image generation (no API key): {placeholder.alt_text}"
-                )
+                logger.warning(f"Skipping image generation (no API key): {placeholder.alt_text}")
                 skipped += 1
                 continue
 
@@ -63,8 +61,7 @@ def process_images(book: Book, config: BookConfig) -> Book:
             skipped += 1
 
     logger.info(
-        f"Image processing complete: "
-        f"{generated} generated, {cached} cached, {skipped} skipped"
+        f"Image processing complete: {generated} generated, {cached} cached, {skipped} skipped"
     )
 
     return book
