@@ -9,7 +9,7 @@ DirectoryPath: TypeAlias = Path | str
 
 # Common constants
 DEFAULT_OUTPUT_FORMAT = "pdf"
-SUPPORTED_OUTPUT_FORMATS = {"pdf", "html", "epub"}
+SUPPORTED_OUTPUT_FORMATS = {"pdf", "html", "epub", "docx"}
 SUPPORTED_LANGUAGES = {
     "python",
     "javascript",

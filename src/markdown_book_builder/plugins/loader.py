@@ -11,7 +11,12 @@ from markdown_book_builder.rendering import PandocRenderer
 def load_builtin_plugins() -> None:
     """Load and register all built-in plugins."""
     # Register renderers
+    from markdown_book_builder.rendering import DOCXRenderer, EPUBRenderer, HTMLRenderer
+
     register_renderer("pdf", PandocRenderer)
+    register_renderer("html", HTMLRenderer)
+    register_renderer("epub", EPUBRenderer)
+    register_renderer("docx", DOCXRenderer)
 
     # Register diagram renderers
     from markdown_book_builder.plugins.diagram import MermaidDiagramRenderer

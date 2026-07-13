@@ -61,7 +61,8 @@ def build(path: str = typer.Argument(".", help="Path to book project or book.tom
             f"✓ Build complete: {book.title} ({len(book.chapters)} chapters)",
             fg="green",
         )
-        typer.secho(f"✓ PDF written to {output_path}", fg="green")
+        format_upper = config.output.format.upper()
+        typer.secho(f"✓ {format_upper} written to {output_path}", fg="green")
 
     except ConfigurationError as e:
         typer.secho(f"Configuration Error: {e}", fg="red")

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Sample Author" />
+  <title>The Complete Guide to Markdown Book Builder</title>
+  <style>
+
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+:root {
+--primary-color: #0066cc;
+--text-color: #333;
+--bg-color: #fff;
+--code-bg: #f5f5f5;
+--border-color: #ddd;
+--font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+--mono-font: "Monaco", "Menlo", "Consolas", monospace;
+}
+body {
+font-family: var(--font-family);
+color: var(--text-color);
+background-color: var(--bg-color);
+line-height: 1.6;
+max-width: 900px;
+margin: 0 auto;
+padding: 20px;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.5em;
+margin-bottom: 0.5em;
+font-weight: 600;
+color: var(--text-color);
+}
+h1 {
+font-size: 2.5em;
+border-bottom: 2px solid var(--primary-color);
+padding-bottom: 0.3em;
+}
+h2 {
+font-size: 2em;
+border-bottom: 1px solid var(--border-color);
+padding-bottom: 0.2em;
+}
+h3 { font-size: 1.5em; }
+h4 { font-size: 1.2em; }
+h5 { font-size: 1.1em; }
+h6 { font-size: 1em; }
+p {
+margin: 1em 0;
+}
+a {
+color: var(--primary-color);
+text-decoration: none;
+}
+a:hover {
+text-decoration: underline;
+}
+code {
+font-family: var(--mono-font);
+background-color: var(--code-bg);
+padding: 2px 6px;
+border-radius: 3px;
+font-size: 0.9em;
+}
+pre {
+background-color: var(--code-bg);
+border: 1px solid var(--border-color);
+border-radius: 5px;
+padding: 15px;
+overflow-x: auto;
+font-family: var(--mono-font);
+font-size: 0.9em;
+}
+pre code {
+background-color: transparent;
+padding: 0;
+border-radius: 0;
+}
+blockquote {
+border-left: 4px solid var(--primary-color);
+padding-left: 15px;
+margin-left: 0;
+color: #666;
+font-style: italic;
+}
+ul, ol {
+margin: 1em 0;
+padding-left: 2em;
+}
+li {
+margin: 0.5em 0;
+}
+table {
+border-collapse: collapse;
+width: 100%;
+margin: 1em 0;
+}
+th, td {
+border: 1px solid var(--border-color);
+padding: 10px;
+text-align: left;
+}
+th {
+background-color: var(--code-bg);
+font-weight: 600;
+}
+img {
+max-width: 100%;
+height: auto;
+margin: 1em 0;
+}
+hr {
+border: none;
+border-top: 1px solid var(--border-color);
+margin: 2em 0;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">The Complete Guide to Markdown Book Builder</h1>
+<p class="author">Sample Author</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#introduction" id="toc-introduction">Introduction</a>
+<ul>
+<li><a href="#overview" id="toc-overview">Overview</a></li>
+<li><a href="#content" id="toc-content">Content</a></li>
+<li><a href="#summary" id="toc-summary">Summary</a></li>
+</ul></li>
+<li><a href="#getting-started" id="toc-getting-started">Getting
+Started</a>
+<ul>
+<li><a href="#overview-1" id="toc-overview-1">Overview</a></li>
+<li><a href="#content-1" id="toc-content-1">Content</a></li>
+<li><a href="#summary-1" id="toc-summary-1">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-3" id="toc-chapter-3">Chapter 3</a>
+<ul>
+<li><a href="#overview-2" id="toc-overview-2">Overview</a></li>
+<li><a href="#content-2" id="toc-content-2">Content</a></li>
+<li><a href="#summary-2" id="toc-summary-2">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-4" id="toc-chapter-4">Chapter 4</a>
+<ul>
+<li><a href="#overview-3" id="toc-overview-3">Overview</a></li>
+<li><a href="#content-3" id="toc-content-3">Content</a></li>
+<li><a href="#summary-3" id="toc-summary-3">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-5" id="toc-chapter-5">Chapter 5</a>
+<ul>
+<li><a href="#overview-4" id="toc-overview-4">Overview</a></li>
+<li><a href="#content-4" id="toc-content-4">Content</a></li>
+<li><a href="#summary-4" id="toc-summary-4">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-6" id="toc-chapter-6">Chapter 6</a>
+<ul>
+<li><a href="#overview-5" id="toc-overview-5">Overview</a></li>
+<li><a href="#content-5" id="toc-content-5">Content</a></li>
+<li><a href="#summary-5" id="toc-summary-5">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-7" id="toc-chapter-7">Chapter 7</a>
+<ul>
+<li><a href="#overview-6" id="toc-overview-6">Overview</a></li>
+<li><a href="#content-6" id="toc-content-6">Content</a></li>
+<li><a href="#summary-6" id="toc-summary-6">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-8" id="toc-chapter-8">Chapter 8</a>
+<ul>
+<li><a href="#overview-7" id="toc-overview-7">Overview</a></li>
+<li><a href="#content-7" id="toc-content-7">Content</a></li>
+<li><a href="#summary-7" id="toc-summary-7">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-9" id="toc-chapter-9">Chapter 9</a>
+<ul>
+<li><a href="#overview-8" id="toc-overview-8">Overview</a></li>
+<li><a href="#content-8" id="toc-content-8">Content</a></li>
+<li><a href="#summary-8" id="toc-summary-8">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-10" id="toc-chapter-10">Chapter 10</a>
+<ul>
+<li><a href="#overview-9" id="toc-overview-9">Overview</a></li>
+<li><a href="#content-9" id="toc-content-9">Content</a></li>
+<li><a href="#summary-9" id="toc-summary-9">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-11" id="toc-chapter-11">Chapter 11</a>
+<ul>
+<li><a href="#overview-10" id="toc-overview-10">Overview</a></li>
+<li><a href="#content-10" id="toc-content-10">Content</a></li>
+<li><a href="#summary-10" id="toc-summary-10">Summary</a></li>
+</ul></li>
+<li><a href="#chapter-12" id="toc-chapter-12">Chapter 12</a>
+<ul>
+<li><a href="#overview-11" id="toc-overview-11">Overview</a></li>
+<li><a href="#content-11" id="toc-content-11">Content</a></li>
+<li><a href="#summary-11" id="toc-summary-11">Summary</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="introduction">Introduction</h1>
+<h2 id="overview">Overview</h2>
+<p>This is chapter 1 of the Markdown Book Builder guide.</p>
+<h2 id="content">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="getting-started">Getting Started</h1>
+<h2 id="overview-1">Overview</h2>
+<p>This is chapter 2 of the Markdown Book Builder guide.</p>
+<h2 id="content-1">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-1">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-3">Chapter 3</h1>
+<h2 id="overview-2">Overview</h2>
+<p>This is chapter 3 of the Markdown Book Builder guide.</p>
+<h2 id="content-2">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-2">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-4">Chapter 4</h1>
+<h2 id="overview-3">Overview</h2>
+<p>This is chapter 4 of the Markdown Book Builder guide.</p>
+<h2 id="content-3">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-3">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-5">Chapter 5</h1>
+<h2 id="overview-4">Overview</h2>
+<p>This is chapter 5 of the Markdown Book Builder guide.</p>
+<h2 id="content-4">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-4">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-6">Chapter 6</h1>
+<h2 id="overview-5">Overview</h2>
+<p>This is chapter 6 of the Markdown Book Builder guide.</p>
+<h2 id="content-5">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-5">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-7">Chapter 7</h1>
+<h2 id="overview-6">Overview</h2>
+<p>This is chapter 7 of the Markdown Book Builder guide.</p>
+<h2 id="content-6">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-6">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-8">Chapter 8</h1>
+<h2 id="overview-7">Overview</h2>
+<p>This is chapter 8 of the Markdown Book Builder guide.</p>
+<h2 id="content-7">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-7">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-9">Chapter 9</h1>
+<h2 id="overview-8">Overview</h2>
+<p>This is chapter 9 of the Markdown Book Builder guide.</p>
+<h2 id="content-8">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-8">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-10">Chapter 10</h1>
+<h2 id="overview-9">Overview</h2>
+<p>This is chapter 10 of the Markdown Book Builder guide.</p>
+<h2 id="content-9">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-9">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-11">Chapter 11</h1>
+<h2 id="overview-10">Overview</h2>
+<p>This is chapter 11 of the Markdown Book Builder guide.</p>
+<h2 id="content-10">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-10">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+<h1 id="chapter-12">Chapter 12</h1>
+<h2 id="overview-11">Overview</h2>
+<p>This is chapter 12 of the Markdown Book Builder guide.</p>
+<h2 id="content-11">Content</h2>
+<p>Main content for this chapter with practical examples and
+explanations.</p>
+<h2 id="summary-11">Summary</h2>
+<p>Key takeaways from this chapter.</p>
+</body>
+</html>
