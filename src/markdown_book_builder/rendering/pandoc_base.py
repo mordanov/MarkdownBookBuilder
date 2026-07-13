@@ -1,13 +1,19 @@
 """Base class for Pandoc-backed renderers."""
 
 import subprocess
+import tempfile
 from abc import abstractmethod
 from pathlib import Path
 
+from markdown_book_builder.ast_.models import Book, Chapter, Image, Paragraph, Section, Text
+from markdown_book_builder.ast_.transform import traverse_ast
 from markdown_book_builder.config.models import BookConfig
 from markdown_book_builder.core.errors import ConfigurationError, TransformationError
+from markdown_book_builder.core.logging import get_logger
 from markdown_book_builder.rendering.base import Renderer
 from markdown_book_builder.themes import load_theme_css
+
+logger = get_logger(__name__)
 
 
 class PandocBaseRenderer(Renderer):
@@ -21,15 +27,16 @@ class PandocBaseRenderer(Renderer):
 
         return shutil.which("pandoc") is not None
 
-    def render(self, files: list[Path], config: BookConfig) -> Path:
-        """Render markdown files using Pandoc."""
+    def render(self, book: Book, config: BookConfig) -> Path:
+        """Render book AST using Pandoc."""
         if not self.is_available():
             raise ConfigurationError("pandoc not found on PATH")
 
         output_path = self._resolve_output_path(config)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        cmd = self._build_pandoc_cmd(files, output_path, config)
+        md_files = self._book_to_temp_markdown(book)
+        cmd = self._build_pandoc_cmd(md_files, output_path, config)
 
         try:
             proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120, check=False)
@@ -112,3 +119,59 @@ class PandocBaseRenderer(Renderer):
         Override in subclasses for format-specific options.
         """
         return []
+
+    def _book_to_temp_markdown(self, book: Book) -> list[Path]:
+        """Convert Book AST to temporary markdown files.
+
+        Returns list of temporary file paths with updated image references.
+        """
+        temp_dir = tempfile.mkdtemp(prefix="mbb_render_")
+        temp_files = []
+
+        for chapter in book.chapters:
+            md_content = self._chapter_to_markdown(chapter)
+            temp_file = Path(temp_dir) / f"{chapter.title.replace('/', '_')}.md"
+            temp_file.write_text(md_content, encoding="utf-8")
+            temp_files.append(temp_file)
+            logger.debug(f"Created temp markdown: {temp_file}")
+
+        return temp_files
+
+    def _chapter_to_markdown(self, chapter: Chapter) -> str:
+        """Convert Chapter AST to markdown string."""
+        lines = [f"# {chapter.title}\n"]
+
+        for child in chapter.children:
+            if isinstance(child, Section):
+                lines.append(self._section_to_markdown(child, level=1))
+
+        return "\n".join(lines)
+
+    def _section_to_markdown(self, section: Section, level: int) -> str:
+        """Convert Section AST to markdown string."""
+        lines = [f"{'#' * (level + 1)} {section.title}\n"]
+
+        for child in section.children:
+            if isinstance(child, Paragraph):
+                para_text = "".join(
+                    self._node_to_markdown(n)
+                    for n in child.children
+                    if isinstance(n, (Text, Image))
+                )
+                lines.append(para_text)
+                lines.append("")
+            elif isinstance(child, Section):
+                lines.append(self._section_to_markdown(child, level + 1))
+
+        return "\n".join(lines)
+
+    def _node_to_markdown(self, node: Text | Image) -> str:
+        """Convert AST node to markdown."""
+        if isinstance(node, Text):
+            return node.content
+        elif isinstance(node, Image):
+            if node.path:
+                return f"![{node.alt_text}]({node.path})"
+            else:
+                return f"*{node.alt_text}*"
+        return ""

@@ -59,7 +59,7 @@ def build(path: str = typer.Argument(".", help="Path to book project or book.tom
             typer.secho(f"Error: {config.output.format} renderer not available", fg="red")
             raise SystemExit(1) from None
 
-        output_path = renderer.render(files, config)
+        output_path = renderer.render(book, config)
 
         typer.secho(
             f"✓ Build complete: {book.title} ({len(book.chapters)} chapters)",

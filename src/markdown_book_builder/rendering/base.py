@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+from markdown_book_builder.ast_.models import Book
 from markdown_book_builder.config.models import BookConfig
 
 
@@ -11,11 +12,11 @@ class Renderer(ABC):
         pass
 
     @abstractmethod
-    def render(self, files: list[Path], config: BookConfig) -> Path:
-        """Render markdown files to output format.
+    def render(self, book: Book, config: BookConfig) -> Path:
+        """Render book AST to output format.
 
         Args:
-            files: Ordered list of Markdown file paths to render
+            book: Book AST with processed images
             config: Book configuration
 
         Returns:
