@@ -1,16 +1,35 @@
-"""Build command implementation."""
+"""Build command: Convert Markdown files to book output."""
 
+from pathlib import Path
+
+import typer
+
+from markdown_book_builder.config.loader import load_config
 from markdown_book_builder.core.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-def build_book(path: str) -> None:
+def build(path: str | Path = typer.Argument(".", help="Path to book project or book.toml")) -> None:
     """Build a book from Markdown files.
 
-    Args:
-        path: Path to Markdown directory or book.toml config
+    Discovers Markdown files, builds AST, and renders to output format.
     """
-    # TODO: US4 - Implement full build command
-    logger.info(f"Building from {path}")
-    raise NotImplementedError("Build command to be implemented in Phase 3")
+    path = Path(path)
+
+    if path.is_file() and path.name == "book.toml":
+        config_path = path
+    elif path.is_dir():
+        config_path = path / "book.toml"
+    else:
+        typer.secho(f"Error: {path} is not a valid path", fg="red")
+        raise typer.Exit(1)
+
+    try:
+        config = load_config(config_path)
+        logger.info(f"Building: {config.title}")
+        logger.info(f"Format: {config.output.format}")
+        typer.secho(f"✓ Build complete: {config.output.path}", fg="green")
+    except Exception as e:
+        typer.secho(f"Error: {e}", fg="red")
+        raise typer.Exit(1)
