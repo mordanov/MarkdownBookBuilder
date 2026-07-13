@@ -8,7 +8,7 @@ from markdown_book_builder.config.loader import load_config
 from markdown_book_builder.core.errors import ConfigurationError
 from markdown_book_builder.core.logging import get_logger
 from markdown_book_builder.discovery.service import discover_book, discover_files
-from markdown_book_builder.rendering import PandocRenderer
+from markdown_book_builder.plugins import get_renderer
 
 logger = get_logger(__name__)
 
@@ -46,9 +46,13 @@ def build(path: str = typer.Argument(".", help="Path to book project or book.tom
         files = discover_files(source_dir, config)
 
         typer.secho(f"📝 Rendering to {config.output.format.upper()}...", fg="cyan")
-        renderer = PandocRenderer()
+        renderer = get_renderer(config.output.format)
+        if not renderer:
+            typer.secho(f"Error: No renderer registered for '{config.output.format}'", fg="red")
+            raise SystemExit(1) from None
+
         if not renderer.is_available():
-            typer.secho("Error: pandoc not found on PATH", fg="red")
+            typer.secho(f"Error: {config.output.format} renderer not available", fg="red")
             raise SystemExit(1) from None
 
         output_path = renderer.render(files, config)

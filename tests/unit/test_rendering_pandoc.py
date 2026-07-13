@@ -74,10 +74,7 @@ class TestPandocRendererRender:
 
     def test_render_pandoc_failure(self, renderer, config, sample_files):
         with patch("subprocess.run") as mock_run:
-            mock_run.return_value = MagicMock(
-                returncode=1,
-                stderr="pandoc: Unknown writer format"
-            )
+            mock_run.return_value = MagicMock(returncode=1, stderr="pandoc: Unknown writer format")
 
             with pytest.raises(TransformationError, match="pandoc failed"):
                 renderer.render(sample_files, config)

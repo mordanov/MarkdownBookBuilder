@@ -2,7 +2,7 @@
 
 from collections.abc import Generator
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from typer.testing import CliRunner
@@ -62,10 +62,11 @@ model = "gpt-4o"
 
 def test_build_from_directory(sample_project: Path) -> None:
     """Test build command from directory."""
-    with patch("markdown_book_builder.cli.build.PandocRenderer") as MockRenderer:
-        mock_instance = MockRenderer.return_value
-        mock_instance.is_available.return_value = True
-        mock_instance.render.return_value = sample_project / "output" / "book.pdf"
+    with patch("markdown_book_builder.plugins.registry.get_renderer") as mock_get:
+        mock_renderer = MagicMock()
+        mock_renderer.is_available.return_value = True
+        mock_renderer.render.return_value = sample_project / "output" / "book.pdf"
+        mock_get.return_value = mock_renderer
         result = runner.invoke(app, ["build", str(sample_project)])
         assert result.exit_code == 0
         assert "Build complete" in result.stdout
@@ -74,10 +75,11 @@ def test_build_from_directory(sample_project: Path) -> None:
 
 def test_build_from_toml_file(sample_project: Path) -> None:
     """Test build command with explicit toml file."""
-    with patch("markdown_book_builder.cli.build.PandocRenderer") as MockRenderer:
-        mock_instance = MockRenderer.return_value
-        mock_instance.is_available.return_value = True
-        mock_instance.render.return_value = sample_project / "output" / "book.pdf"
+    with patch("markdown_book_builder.plugins.registry.get_renderer") as mock_get:
+        mock_renderer = MagicMock()
+        mock_renderer.is_available.return_value = True
+        mock_renderer.render.return_value = sample_project / "output" / "book.pdf"
+        mock_get.return_value = mock_renderer
         toml_file = sample_project / "book.toml"
         result = runner.invoke(app, ["build", str(toml_file)])
         assert result.exit_code == 0

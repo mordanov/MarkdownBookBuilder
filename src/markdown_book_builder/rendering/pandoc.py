@@ -21,11 +21,15 @@ class PandocRenderer(Renderer):
         cmd = [
             "pandoc",
             *[str(f) for f in files],
-            "--from", "markdown",
-            "--to", "pdf",
-            "--pdf-engine", config.output.pdf_engine,
+            "--from",
+            "markdown",
+            "--to",
+            "pdf",
+            "--pdf-engine",
+            config.output.pdf_engine,
             "--toc",
-            "--metadata", f"title={config.title}",
+            "--metadata",
+            f"title={config.title}",
         ]
         if config.author:
             cmd.extend(["--metadata", f"author={config.author}"])
@@ -33,13 +37,7 @@ class PandocRenderer(Renderer):
         cmd.extend(["-o", str(output_path)])
 
         try:
-            proc = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=120,
-                check=False
-            )
+            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120, check=False)
         except FileNotFoundError as e:
             raise ConfigurationError("pandoc not found on PATH") from e
 

@@ -17,7 +17,9 @@ class OutputConfig(BaseModel):
 
     format: str = Field(default="pdf", description="Output format (pdf, html, epub, latex)")
     path: Path = Field(default=Path("output/book.pdf"), description="Output file path")
-    pdf_engine: str = Field(default="xelatex", description="PDF engine for pandoc (xelatex, pdflatex, wkhtmltopdf)")
+    pdf_engine: str = Field(
+        default="xelatex", description="PDF engine for pandoc (xelatex, pdflatex, wkhtmltopdf)"
+    )
 
 
 class BookConfig(BaseModel):
