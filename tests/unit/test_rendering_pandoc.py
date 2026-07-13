@@ -52,7 +52,9 @@ class TestPandocRendererRender:
         output_path = tmp_path / "output" / "book.pdf"
         config.output.path = output_path
 
-        with patch("subprocess.run") as mock_run:
+        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
+            "subprocess.run"
+        ) as mock_run:
             mock_run.return_value = MagicMock(returncode=0)
 
             result = renderer.render(sample_files, config)
@@ -72,14 +74,18 @@ class TestPandocRendererRender:
             assert str(output_path) in cmd
 
     def test_render_pandoc_failure(self, renderer, config, sample_files):
-        with patch("subprocess.run") as mock_run:
+        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
+            "subprocess.run"
+        ) as mock_run:
             mock_run.return_value = MagicMock(returncode=1, stderr="pandoc: Unknown writer format")
 
             with pytest.raises(TransformationError, match="pandoc failed"):
                 renderer.render(sample_files, config)
 
     def test_render_pandoc_not_found(self, renderer, config, sample_files):
-        with patch("subprocess.run", side_effect=FileNotFoundError):
+        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
+            "subprocess.run", side_effect=FileNotFoundError
+        ):
             with pytest.raises(ConfigurationError, match="pandoc not found"):
                 renderer.render(sample_files, config)
 
@@ -88,7 +94,9 @@ class TestPandocRendererRender:
         config.output.path = output_path
         config.author = "Jane Doe"
 
-        with patch("subprocess.run") as mock_run:
+        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
+            "subprocess.run"
+        ) as mock_run:
             mock_run.return_value = MagicMock(returncode=0)
             renderer.render(sample_files, config)
 
@@ -100,7 +108,9 @@ class TestPandocRendererRender:
         output_path = tmp_path / "deep" / "nested" / "output" / "book.pdf"
         config.output.path = output_path
 
-        with patch("subprocess.run") as mock_run:
+        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
+            "subprocess.run"
+        ) as mock_run:
             mock_run.return_value = MagicMock(returncode=0)
             renderer.render(sample_files, config)
 
@@ -116,7 +126,9 @@ class TestPandocRendererRender:
         config.output.path = output_path
         config.output.pdf_engine = "pdflatex"
 
-        with patch("subprocess.run") as mock_run:
+        with patch("shutil.which", return_value="/usr/bin/pandoc"), patch(
+            "subprocess.run"
+        ) as mock_run:
             mock_run.return_value = MagicMock(returncode=0)
             renderer.render(sample_files, config)
 
