@@ -62,8 +62,10 @@ model = "gpt-4o"
 
 def test_build_from_directory(sample_project: Path) -> None:
     """Test build command from directory."""
-    with patch("markdown_book_builder.cli.build.PandocRenderer.render") as mock_render:
-        mock_render.return_value = sample_project / "output" / "book.pdf"
+    with patch("markdown_book_builder.cli.build.PandocRenderer") as MockRenderer:
+        mock_instance = MockRenderer.return_value
+        mock_instance.is_available.return_value = True
+        mock_instance.render.return_value = sample_project / "output" / "book.pdf"
         result = runner.invoke(app, ["build", str(sample_project)])
         assert result.exit_code == 0
         assert "Build complete" in result.stdout
@@ -72,8 +74,10 @@ def test_build_from_directory(sample_project: Path) -> None:
 
 def test_build_from_toml_file(sample_project: Path) -> None:
     """Test build command with explicit toml file."""
-    with patch("markdown_book_builder.cli.build.PandocRenderer.render") as mock_render:
-        mock_render.return_value = sample_project / "output" / "book.pdf"
+    with patch("markdown_book_builder.cli.build.PandocRenderer") as MockRenderer:
+        mock_instance = MockRenderer.return_value
+        mock_instance.is_available.return_value = True
+        mock_instance.render.return_value = sample_project / "output" / "book.pdf"
         toml_file = sample_project / "book.toml"
         result = runner.invoke(app, ["build", str(toml_file)])
         assert result.exit_code == 0
