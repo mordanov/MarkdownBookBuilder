@@ -108,7 +108,9 @@ class TestProcessImages:
         ):
             mock_placeholder = MagicMock()
             mock_placeholder.alt_text = "new diagram"
-            mock_placeholder.node = Image(path="image:new diagram", alt_text="new diagram", caption="New")
+            mock_placeholder.node = Image(
+                path="image:new diagram", alt_text="new diagram", caption="New"
+            )
             mock_placeholder.path = "image:new diagram"
             mock_detect.return_value = [mock_placeholder]
 
