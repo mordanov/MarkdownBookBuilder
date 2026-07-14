@@ -27,14 +27,8 @@ jobs:
       - name: Install dependencies
         run: uv sync --extra dev
 
-      - name: Run Ruff linting
-        run: .venv/bin/ruff check src/ tests/
-
-      - name: Run Ruff formatting check
-        run: .venv/bin/ruff format --check src/ tests/
-
-      - name: Run type checking
-        run: .venv/bin/mypy src/
+      - name: Run pre-commit hooks
+        run: .venv/bin/pre-commit run --all-files
 
       - name: Run unit tests
         run: .venv/bin/pytest tests/unit -v --cov=src --cov-report=xml --cov-report=term || [ $? -eq 5 ]
