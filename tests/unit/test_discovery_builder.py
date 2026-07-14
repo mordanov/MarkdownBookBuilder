@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from markdown_book_builder.ast_.models import Book
+from markdown_book_builder.ast_.models import Book, Image, Paragraph
 from markdown_book_builder.config.models import BookConfig
 from markdown_book_builder.discovery.builder import build_ast_from_files, parse_markdown_file
 from tests.fixtures.discovery_samples import (
@@ -78,6 +78,68 @@ def test_build_ast_from_files_empty(sample_config: BookConfig) -> None:
     """Test error on empty file list."""
     with pytest.raises(ValueError, match="No Markdown files"):
         build_ast_from_files([], sample_config)
+
+
+def test_parse_markdown_file_bracket_placeholder(tmp_path: Path) -> None:
+    """[ИЛЛЮСТРАЦИЯ N: desc] is parsed into an Image AST node."""
+    content = "# Chapter\n\nBefore text [ИЛЛЮСТРАЦИЯ 1: a cat sitting on a mat] after text\n"
+    file_path = tmp_path / "chapter.md"
+    file_path.write_text(content, encoding="utf-8")
+
+    chapter = parse_markdown_file(file_path)
+
+    # Collect all Image nodes from the AST
+    images = []
+    for section in chapter.children:
+        for child in section.children:
+            if isinstance(child, Paragraph):
+                for node in child.children:
+                    if isinstance(node, Image):
+                        images.append(node)
+
+    assert len(images) == 1
+    assert images[0].alt_text == "a cat sitting on a mat"
+    assert images[0].path.startswith("image:")
+
+
+def test_parse_markdown_file_multiple_bracket_placeholders(tmp_path: Path) -> None:
+    """Multiple [ИЛЛЮСТРАЦИЯ N: ...] in one paragraph produce multiple Image nodes."""
+    content = "# Chapter\n\n[ИЛЛЮСТРАЦИЯ 1: first image] some text [ИЛЛЮСТРАЦИЯ 2: second image]\n"
+    file_path = tmp_path / "chapter.md"
+    file_path.write_text(content, encoding="utf-8")
+
+    chapter = parse_markdown_file(file_path)
+
+    images = []
+    for section in chapter.children:
+        for child in section.children:
+            if isinstance(child, Paragraph):
+                for node in child.children:
+                    if isinstance(node, Image):
+                        images.append(node)
+
+    assert len(images) == 2
+    assert images[0].alt_text == "first image"
+    assert images[1].alt_text == "second image"
+
+
+def test_parse_markdown_file_text_around_bracket_placeholder(tmp_path: Path) -> None:
+    """Text before and after a bracket placeholder is preserved as Text nodes."""
+    content = "# Chapter\n\nBefore [ИЛЛЮСТРАЦИЯ 1: diagram] After\n"
+    file_path = tmp_path / "chapter.md"
+    file_path.write_text(content, encoding="utf-8")
+
+    chapter = parse_markdown_file(file_path)
+
+    nodes = []
+    for section in chapter.children:
+        for child in section.children:
+            if isinstance(child, Paragraph):
+                nodes.extend(child.children)
+
+    node_types = [type(n).__name__ for n in nodes]
+    assert "Text" in node_types
+    assert "Image" in node_types
 
 
 def test_build_ast_preserves_order(tmp_path: Path, sample_config: BookConfig) -> None:

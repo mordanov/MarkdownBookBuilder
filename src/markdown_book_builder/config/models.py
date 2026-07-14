@@ -11,6 +11,10 @@ class OpenAIConfig(BaseModel):
     api_key: str = Field(default="", description="OpenAI API key")
     model: str = Field(default="gpt-4o", description="OpenAI model to use")
     image_model: str = Field(default="dall-e-3", description="OpenAI model for image generation")
+    grayscale: bool = Field(
+        default=False,
+        description="Generate images in grayscale (black & white) for print or token economy",
+    )
 
 
 class ThemeConfig(BaseModel):

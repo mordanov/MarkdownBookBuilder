@@ -191,3 +191,96 @@ def test_generate_placeholder_image_success() -> None:
 
         assert result == test_image_data
         mock_gen.assert_called_once_with("a diagram", config)
+
+
+def test_generate_image_grayscale_prepends_prefix() -> None:
+    """Grayscale mode prepends B&W instruction to prompt."""
+    config = OpenAIConfig(api_key="sk-test", model="gpt-4o", image_model="dall-e-3", grayscale=True)
+    test_image_data = b"\x89PNG\r\n\x1a\n"
+
+    import sys
+
+    mock_openai_module = MagicMock()
+    mock_client = MagicMock()
+    mock_openai_module.OpenAI.return_value = mock_client
+
+    mock_response = MagicMock()
+    mock_response.data = [MagicMock(url="https://example.com/image.png")]
+    mock_client.images.generate.return_value = mock_response
+
+    with (
+        patch.dict(sys.modules, {"openai": mock_openai_module}),
+        patch("urllib.request.urlopen") as mock_urlopen,
+    ):
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = test_image_data
+        mock_resp.__enter__.return_value = mock_resp
+        mock_urlopen.return_value = mock_resp
+
+        generate_image("a cat", config)
+
+        call_kwargs = mock_client.images.generate.call_args[1]
+        assert call_kwargs["prompt"].startswith("Grayscale illustration")
+        assert "a cat" in call_kwargs["prompt"]
+
+
+def test_generate_image_grayscale_dalle2_uses_small_size() -> None:
+    """Grayscale + dall-e-2 uses 512x512 for cost savings."""
+    config = OpenAIConfig(api_key="sk-test", model="gpt-4o", image_model="dall-e-2", grayscale=True)
+    test_image_data = b"\x89PNG\r\n\x1a\n"
+
+    import sys
+
+    mock_openai_module = MagicMock()
+    mock_client = MagicMock()
+    mock_openai_module.OpenAI.return_value = mock_client
+
+    mock_response = MagicMock()
+    mock_response.data = [MagicMock(url="https://example.com/image.png")]
+    mock_client.images.generate.return_value = mock_response
+
+    with (
+        patch.dict(sys.modules, {"openai": mock_openai_module}),
+        patch("urllib.request.urlopen") as mock_urlopen,
+    ):
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = test_image_data
+        mock_resp.__enter__.return_value = mock_resp
+        mock_urlopen.return_value = mock_resp
+
+        generate_image("a cat", config)
+
+        call_kwargs = mock_client.images.generate.call_args[1]
+        assert call_kwargs["size"] == "512x512"
+
+
+def test_generate_image_grayscale_false_keeps_default_size() -> None:
+    """Without grayscale, default size is preserved."""
+    config = OpenAIConfig(
+        api_key="sk-test", model="gpt-4o", image_model="dall-e-2", grayscale=False
+    )
+    test_image_data = b"\x89PNG\r\n\x1a\n"
+
+    import sys
+
+    mock_openai_module = MagicMock()
+    mock_client = MagicMock()
+    mock_openai_module.OpenAI.return_value = mock_client
+
+    mock_response = MagicMock()
+    mock_response.data = [MagicMock(url="https://example.com/image.png")]
+    mock_client.images.generate.return_value = mock_response
+
+    with (
+        patch.dict(sys.modules, {"openai": mock_openai_module}),
+        patch("urllib.request.urlopen") as mock_urlopen,
+    ):
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = test_image_data
+        mock_resp.__enter__.return_value = mock_resp
+        mock_urlopen.return_value = mock_resp
+
+        generate_image("a cat", config)
+
+        call_kwargs = mock_client.images.generate.call_args[1]
+        assert call_kwargs["size"] == "1024x1024"

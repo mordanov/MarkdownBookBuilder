@@ -9,6 +9,14 @@ from markdown_book_builder.core.logging import get_logger
 logger = get_logger(__name__)
 
 
+_GRAYSCALE_PREFIX = (
+    "Grayscale illustration, black and white only, no color, suitable for laser print: "
+)
+
+# dall-e-2 supports 256x256 / 512x512 / 1024x1024; smaller = cheaper + faster
+_GRAYSCALE_SIZE_DALLE2 = "512x512"
+
+
 def generate_image(
     prompt: str,
     config: OpenAIConfig,
@@ -27,6 +35,11 @@ def generate_image(
     Raises:
         ConfigurationError: If API key not configured
     """
+    if config.grayscale:
+        prompt = _GRAYSCALE_PREFIX + prompt
+        if config.image_model == "dall-e-2":
+            size = _GRAYSCALE_SIZE_DALLE2
+
     if not config.api_key:
         logger.error("❌ API key not configured (empty or None)")
         raise ConfigurationError("OpenAI API key not configured")

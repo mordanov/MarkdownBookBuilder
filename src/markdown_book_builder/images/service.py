@@ -44,7 +44,7 @@ def process_images(book: Book, config: BookConfig) -> Book:
         try:
             is_generated_placeholder = placeholder.path.startswith("image:")
 
-            prompt_hash = _hash_prompt(placeholder.alt_text)
+            prompt_hash = _hash_prompt(placeholder.alt_text, config.openai.grayscale)
             cached_path = index.get(prompt_hash)
 
             if cached_path:
@@ -95,9 +95,10 @@ def process_images(book: Book, config: BookConfig) -> Book:
     return book
 
 
-def _hash_prompt(prompt: str) -> str:
-    """Generate hash for image prompt."""
-    return hashlib.sha256(prompt.encode()).hexdigest()
+def _hash_prompt(prompt: str, grayscale: bool = False) -> str:
+    """Generate hash for image prompt, including color mode."""
+    key = f"{'bw' if grayscale else 'color'}:{prompt}"
+    return hashlib.sha256(key.encode()).hexdigest()
 
 
 def _save_image(image_data: bytes, cache_dir: Path, prompt_hash: str) -> Path:
