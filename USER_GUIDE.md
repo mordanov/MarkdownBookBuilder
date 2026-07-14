@@ -572,6 +572,74 @@ a:hover {
 
 ---
 
+## PDF Formatting
+
+Control the visual appearance of your PDF output through the `[formatting]` section in `book.toml`. All settings are optional — a built-in default theme is applied automatically.
+
+### Default Theme
+
+When no `[formatting]` section is present, the built-in theme applies:
+
+| Level | Size | Color | Background |
+|-------|------|-------|------------|
+| H1    | 22pt | White | Dark blue (#1A3A5C) |
+| H2    | 16pt | Dark blue | None |
+| H3    | 13pt | Medium blue | None |
+| H4    | 11pt | Dark grey | None |
+| H5–H6 | 10pt | Grey | None |
+
+Page: A4, 2.5 cm margins on all sides. TOC: clickable hyperlinks enabled.
+
+### Customizing Headings
+
+```toml
+[formatting.headings.h1]
+font_size = 24        # pt, range 6–144
+bold = true
+italic = false
+color = "#FFFFFF"     # text color (HEX, with or without #)
+background = "#003366"  # background bar; omit this line for no background
+
+[formatting.headings.h2]
+font_size = 18
+bold = true
+color = "#003366"
+# no background field → no background bar
+```
+
+### Page Layout
+
+```toml
+[formatting.page]
+paper_size = "a4"       # paper format
+margin_top = "2.5cm"    # valid units: cm, mm, in, pt
+margin_bottom = "2.5cm"
+margin_left = "3cm"
+margin_right = "2cm"
+```
+
+### Table of Contents
+
+```toml
+[formatting.toc]
+enabled = true     # include TOC
+depth = 3          # heading levels shown (1–6)
+interactive = true # clickable PDF links; set false to disable
+```
+
+### Configuration Errors
+
+Invalid values are caught before the PDF is generated:
+
+```
+ConfigurationError: formatting.headings.h1.color: '#ZZZZZZ' is not a valid HEX color
+ConfigurationError: formatting.page.margin_top: '0cm' must be greater than 0
+```
+
+Run `python -m markdown_book_builder validate <path>` to check your configuration without building.
+
+---
+
 ## CLI Commands Reference
 
 ### init

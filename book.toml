@@ -28,3 +28,33 @@ model = "gpt-4o"
 # - BOOK_OUTPUT__FORMAT: override output format
 # - BOOK_OUTPUT__PATH: override output path
 # - OPENAI_API_KEY: override OpenAI API key
+
+# PDF formatting (optional — defaults apply when this section is absent)
+# [formatting.page]
+# paper_size = "a4"        # paper format identifier
+# margin_top = "2.5cm"     # top margin (cm, mm, in, pt)
+# margin_bottom = "2.5cm"
+# margin_left = "2.5cm"
+# margin_right = "2.5cm"
+
+# [formatting.toc]
+# enabled = true           # generate table of contents
+# depth = 3                # heading levels to include (1–6)
+# interactive = true       # clickable hyperlinks in PDF
+
+# [formatting.headings.h1]
+# font_size = 22           # pt, range 6–144
+# bold = true
+# italic = false
+# color = "#FFFFFF"        # text color (HEX with or without #)
+# background = "#1A3A5C"   # background color; omit for no background
+
+# [formatting.headings.h2]
+# font_size = 16
+# bold = true
+# color = "#1A3A5C"
+
+# [formatting.headings.h3]
+# font_size = 13
+# bold = true
+# color = "#2C5282"
