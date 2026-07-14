@@ -2,66 +2,96 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  unit-tests:
-    name: Unit Tests
+  tests:
+    name: >-
+      ${{ matrix.test.name }}
+      (Python ${{ matrix.python-version }})
+
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.12"
+          - "3.13"
+
+        test:
+          - name: Unit Tests
+            path: tests/unit
+            coverage: true
+
+          - name: Integration Tests
+            path: tests/integration
+            coverage: false
+
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v8
         with:
-          version: "latest"
+          version: latest
+          enable-cache: true
+          cache-dependency-glob: |
+            uv.lock
+            pyproject.toml
 
       - name: Install dependencies
-        run: uv sync --extra dev
+        run: uv sync --locked --extra dev
 
       - name: Run pre-commit hooks
-        run: |
-          export PATH="$PWD/.venv/bin:$PATH"
-          pre-commit run --all-files
+        if: matrix.test.coverage
+        run: uv run pre-commit run --all-files
 
-      - name: Run unit tests
-        run: .venv/bin/pytest tests/unit -v --cov=src --cov-report=xml --cov-report=term || [ $? -eq 5 ]
+      - name: Run tests
+        run: |
+          if [ "${{ matrix.test.coverage }}" = "true" ]; then
+            uv run pytest \
+              ${{ matrix.test.path }} \
+              -v \
+              --cov=src \
+              --cov-report=xml \
+              --cov-report=term
+          else
+            uv run pytest \
+              ${{ matrix.test.path }} \
+              -v
+          fi
+
+          status=$?
+
+          # pytest exit code 5 = no tests collected
+          if [ $status -ne 0 ] && [ $status -ne 5 ]; then
+            exit $status
+          fi
 
       - name: Upload coverage to Codecov
+        if: matrix.test.coverage
         uses: codecov/codecov-action@v5
         with:
-          files: ./coverage.xml
+          files: coverage.xml
           flags: unittests
-          name: codecov-umbrella
           fail_ci_if_error: false
-
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          version: "latest"
-
-      - name: Install dependencies
-        run: uv sync --extra dev
-
-      - name: Run integration tests
-        run: .venv/bin/pytest tests/integration -v || [ $? -eq 5 ]
