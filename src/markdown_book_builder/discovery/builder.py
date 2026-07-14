@@ -60,6 +60,14 @@ def _tokens_to_ast_children(tokens: list[Token]) -> list[Text | Image]:
                     alt_text=token.content or "",
                 )
             )
+        elif token.type == "code_inline":
+            # Backtick-wrapped placeholders: `[ИЛЛЮСТРАЦИЯ N: description]`
+            bracket_images = _extract_bracket_images(token.content)
+            if bracket_images:
+                for _, description in bracket_images:
+                    children.append(Image(path=f"image:{description}", alt_text=description))
+            else:
+                children.append(Text(content=token.content))
         elif token.type == "softbreak":
             children.append(Text(content="\n"))
         elif token.type == "inline" and token.children:
