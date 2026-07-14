@@ -38,7 +38,7 @@ class PandocBaseRenderer(Renderer):
         cmd = self._build_pandoc_cmd(md_files, output_path, config)
 
         try:
-            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120, check=False)
+            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=6000, check=False)
         except FileNotFoundError as e:
             raise ConfigurationError("pandoc not found on PATH") from e
 

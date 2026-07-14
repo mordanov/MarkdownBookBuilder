@@ -64,7 +64,6 @@ Thumbs.db
 
 # Project-specific
 .uv/
-uv.lock
 *.log
 *.pot
 *.mo
