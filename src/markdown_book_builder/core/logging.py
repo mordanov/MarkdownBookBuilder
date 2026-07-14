@@ -3,36 +3,48 @@
 import logging
 import sys
 
+_PACKAGE = "markdown_book_builder"
 
-def setup_logging(level: int = logging.INFO, verbose: bool = False) -> None:
-    """Set up logging for CLI output.
 
-    Args:
-        level: Logging level (default: INFO)
-        verbose: Enable verbose output (DEBUG level)
+def setup_logging(debug: bool = False, verbose: bool = False) -> None:
+    """Configure logging for CLI output.
+
+    Levels:
+        (default) INFO   — progress messages only
+        --debug          — DEBUG for this package (chapters, images, errors)
+        --verbose        — DEBUG for everything incl. httpx/openai API calls
     """
-    if verbose:
-        level = logging.DEBUG
-
-    # Configure root logger
-    root_logger = logging.getLogger()
-    root_logger.setLevel(level)
+    root = logging.getLogger()
 
     # Remove any existing handlers
-    for handler in root_logger.handlers[:]:
-        root_logger.removeHandler(handler)
+    for h in root.handlers[:]:
+        root.removeHandler(h)
 
-    # Create console handler with CLI-appropriate formatting
     handler = logging.StreamHandler(sys.stderr)
-    handler.setLevel(level)
 
-    # Use simple format for CLI
-    formatter = logging.Formatter(
-        fmt="%(levelname)s: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
+    if verbose:
+        # Full debug: all loggers including third-party (API calls, httpx, etc.)
+        root.setLevel(logging.DEBUG)
+        handler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter(
+            fmt="%(asctime)s %(levelname)-8s %(name)s: %(message)s",
+            datefmt="%H:%M:%S",
+        )
+    elif debug:
+        # Package-only debug: suppress noisy third-party libs
+        root.setLevel(logging.WARNING)
+        handler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter(fmt="%(levelname)s: %(message)s")
+        # Bring our own package down to DEBUG
+        logging.getLogger(_PACKAGE).setLevel(logging.DEBUG)
+    else:
+        root.setLevel(logging.WARNING)
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter(fmt="%(levelname)s: %(message)s")
+        logging.getLogger(_PACKAGE).setLevel(logging.INFO)
+
     handler.setFormatter(formatter)
-    root_logger.addHandler(handler)
+    root.addHandler(handler)
 
 
 def get_logger(name: str) -> logging.Logger:

@@ -1,7 +1,5 @@
 """Main CLI application and root commands."""
 
-import logging
-
 import typer
 
 from markdown_book_builder.cli.build import build
@@ -21,16 +19,21 @@ app = typer.Typer(
 
 @app.callback()
 def main_callback(
+    debug: bool = typer.Option(
+        False,
+        "--debug",
+        "-d",
+        help="Debug output: chapters, image generation, errors (package logs only)",
+    ),
     verbose: bool = typer.Option(
         False,
         "--verbose",
         "-v",
-        help="Enable verbose output (DEBUG level logging)",
+        help="Verbose debug: API calls, warnings, all debug info (includes third-party libs)",
     ),
 ) -> None:
     """Main entry point for Markdown Book Builder CLI."""
-    if verbose:
-        setup_logging(level=logging.DEBUG)
+    setup_logging(debug=debug, verbose=verbose)
 
 
 app.command()(build)
