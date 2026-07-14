@@ -89,20 +89,24 @@ class PandocRenderer(PandocBaseRenderer):
             shape = r"\itshape" if style.italic else r"\upshape"
 
             if style.background:
-                # Heading with colored background bar
+                # Heading with colored background bar.
+                # \titleformat{cmd}[shape]{format}{label}{sep}{before-code}
+                # #1 (heading text) must only appear in before-code (5th arg).
                 lines.append(
                     rf"\titleformat{{\{cmd}}}[block]"
-                    rf"{{{size_cmd}{weight}{shape}\color[HTML]{{{style.color}}}"
-                    rf"\colorbox[HTML]{{{style.background}}}{{\parbox[t]{{\dimexpr\linewidth-2\fboxsep}}{{\strut #1\strut}}}}}}"
-                    rf"{{}}{{0em}}{{}}"
+                    rf"{{{size_cmd}{weight}{shape}}}"
+                    rf"{{}}"
+                    rf"{{0em}}"
+                    rf"{{\colorbox[HTML]{{{style.background}}}{{\parbox[t]{{\dimexpr\linewidth-2\fboxsep}}{{\color[HTML]{{{style.color}}}\strut #1\strut}}}}}}"
                 )
             else:
-                # Heading with text color only
+                # Heading with text color only — label uses standard LaTeX counter command
                 lines.append(
                     rf"\titleformat{{\{cmd}}}"
                     rf"{{{size_cmd}{weight}{shape}\color[HTML]{{{style.color}}}}}"
                     rf"{{\the{cmd}}}"
                     rf"{{1em}}{{}}"
+                    rf"{{}}"
                 )
 
         return "\n".join(lines) + "\n"
