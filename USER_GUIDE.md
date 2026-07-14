@@ -231,7 +231,13 @@ name = "default"                  # default, dark, minimal, or path to custom CS
 api_key = "${OPENAI_API_KEY}"     # From environment variable
 model = "gpt-4o"                  # Text model (unused currently)
 image_model = "dall-e-3"          # Image generation model
+grayscale = false                 # Set to true for black & white output (laser print / token savings)
 ```
+
+Set `grayscale = true` when building for black-and-white laser printing or to reduce OpenAI token costs:
+- Prepends a B&W instruction to every generated image prompt
+- For `dall-e-2`, automatically reduces image size to 512×512 (cheaper)
+- Color and grayscale versions of the same prompt are cached separately
 
 **Important**: Set the `OPENAI_API_KEY` environment variable:
 
@@ -383,6 +389,7 @@ Here's a generated diagram:
    [openai]
    api_key = "${OPENAI_API_KEY}"
    image_model = "dall-e-3"
+   grayscale = false    # true = black & white (laser print / cost savings)
    ```
 
 4. Build normally:
@@ -435,7 +442,7 @@ Generated images are cached automatically in your project directory:
 
 ### Image Placeholder Formats
 
-Two formats are supported for image placeholders:
+Two formats are supported for image placeholders. Both are detected automatically — no configuration required.
 
 #### Markdown Format (Default)
 
@@ -463,14 +470,17 @@ For documents in Russian or other languages, use the bracket format:
 ```
 
 **Format**: `[ИЛЛЮСТРАЦИЯ N: detailed description]`
-- N = any number (ignored by the system, used for reference)
+- N = any number (for your reference only, ignored by the generator)
 - Description = detailed prompt for image generation
 
 The system automatically:
-1. Detects the bracket format
-2. Extracts the description
-3. Generates or retrieves cached image
-4. Replaces placeholder with actual image path
+1. Detects all `[ИЛЛЮСТРАЦИЯ N: ...]` placeholders in the text
+2. Extracts the description as the generation prompt
+3. Checks the cache (keyed by prompt + color mode)
+4. Generates a new image via OpenAI if not cached
+5. Replaces the placeholder with the actual image path in the AST
+
+> **Note**: The `image_placeholder_format` config field is reserved for future use. Currently both formats are always detected regardless of that setting.
 
 **Example with context**:
 
@@ -764,6 +774,29 @@ First build generates images via OpenAI. Subsequent builds reuse cached images.
 
 ---
 
+### Example 3b: Black & White Book for Laser Printing
+
+Use `grayscale = true` to generate illustrations suited for monochrome laser printers and to reduce OpenAI costs.
+
+**book.toml:**
+
+```toml
+title = "Microservices Handbook (Print Edition)"
+author = "Carol Cloud"
+
+[openai]
+api_key = "${OPENAI_API_KEY}"
+image_model = "dall-e-2"   # dall-e-2 with 512x512 is cheapest for B&W
+grayscale = true
+```
+
+**What changes with `grayscale = true`:**
+- Every image prompt is prefixed with a grayscale instruction
+- `dall-e-2` automatically uses 512×512 (lower cost, faster)
+- B&W images are cached separately from color ones — switching the flag doesn't invalidate existing color cache
+
+---
+
 ### Example 4: EPUB Book for Distribution
 
 **book.toml:**
@@ -859,6 +892,7 @@ api_key = "sk-..."  # Not recommended; use environment variable instead
 - First build is slow (image generation happens once)
 - Subsequent builds are fast (cached images reused)
 - Batch images across multiple chapters for efficiency
+- Use `grayscale = true` with `image_model = "dall-e-2"` for faster, cheaper generation (512×512)
 
 ### PDF rendering looks wrong
 

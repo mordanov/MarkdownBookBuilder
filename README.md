@@ -15,12 +15,13 @@
 - 📄 **Markdown-first**: Organize your book as a collection of Markdown files
 - 🎯 **Deterministic builds**: Same input → identical output, every time
 - 🔌 **Extensible**: Plugin architecture for renderers, themes, and validators
-- 🤖 **AI-assisted**: OpenAI integration for image generation (DALL-E 3)
+- 🤖 **AI-assisted**: OpenAI integration for image generation (DALL-E 2/3, gpt-image-2)
 - ⚡ **Fast**: Document discovery <1s for 100+ files; CLI <100ms
 - 🔒 **Reproducible**: Configuration-driven builds with version-pinned dependencies
 - 📦 **Multiple formats**: PDF, HTML, EPUB, DOCX exporters
 - 🎨 **Themes**: Built-in (default, dark, minimal) + custom CSS support
 - 🖼️ **Image caching**: SHA256-based cache with automatic generation
+- ⬛ **Grayscale mode**: B&W image generation for laser print and cost savings
 
 ## Quick Start
 
@@ -203,8 +204,12 @@ version = "1.0.0"
 format = "pdf"
 path = "output/my-book.pdf"
 
-# Set API keys via environment variables
+# Optional: OpenAI image generation
 # export OPENAI_API_KEY="sk-..."
+[openai]
+api_key = "${OPENAI_API_KEY}"
+image_model = "dall-e-3"
+grayscale = false   # true = black & white output (laser print / lower cost)
 ```
 
 ## Architecture
@@ -253,11 +258,12 @@ Output Book (PDF/HTML/EPUB/DOCX)
 - ✅ Diagram rendering (Mermaid via mmdc)
 
 ### Phase 14: OpenAI Integration
-- ✅ Image generation with DALL-E 3
-- ✅ SHA256-based image caching
-- ✅ Automatic placeholder detection
+- ✅ Image generation with DALL-E 2/3, gpt-image-2
+- ✅ SHA256-based image caching (keyed by prompt + color mode)
+- ✅ Automatic placeholder detection — Markdown (`![...]`) and bracket (`[ИЛЛЮСТРАЦИЯ N: ...]`) formats
 - ✅ AST image path updates
 - ✅ Graceful degradation (optional images)
+- ✅ Grayscale mode (`grayscale = true`) for laser print and cost savings
 
 ## Performance Targets
 
