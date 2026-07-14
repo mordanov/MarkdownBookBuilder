@@ -89,24 +89,26 @@ class PandocRenderer(PandocBaseRenderer):
             shape = r"\itshape" if style.italic else r"\upshape"
 
             if style.background:
-                # Heading with colored background bar.
-                # \titleformat{cmd}[shape]{format}{label}{sep}{before-code}
-                # #1 (heading text) must only appear in before-code (5th arg).
+                # titlesec passes the heading text as #1 to before-code (5th arg).
+                # But #1 inside a nested \colorbox{\parbox{...}} causes "Illegal parameter
+                # number" because LaTeX sees it as a macro parameter in the wrong context.
+                # Fix: define a \newcommand helper that accepts #1 explicitly, then
+                # reference it by name in \titleformat — no bare #1 in the titleformat line.
+                helper = f"\\mbbhd{cmd}"
                 lines.append(
-                    rf"\titleformat{{\{cmd}}}[block]"
-                    rf"{{{size_cmd}{weight}{shape}}}"
-                    rf"{{}}"
-                    rf"{{0em}}"
-                    rf"{{\colorbox[HTML]{{{style.background}}}{{\parbox[t]{{\dimexpr\linewidth-2\fboxsep}}{{\color[HTML]{{{style.color}}}\strut #1\strut}}}}}}"
+                    rf"\newcommand{{{helper}}}[1]{{"
+                    rf"\colorbox[HTML]{{{style.background}}}{{"
+                    rf"\parbox[t]{{\dimexpr\linewidth-2\fboxsep}}{{"
+                    rf"\color[HTML]{{{style.color}}}{size_cmd}{weight}{shape}\strut#1\strut}}}}}}"
+                )
+                lines.append(
+                    rf"\titleformat{{\{cmd}}}[block]{{{size_cmd}{weight}{shape}}}{{}}{{0em}}{{{helper}}}"
                 )
             else:
-                # Heading with text color only — label uses standard LaTeX counter command
                 lines.append(
                     rf"\titleformat{{\{cmd}}}"
                     rf"{{{size_cmd}{weight}{shape}\color[HTML]{{{style.color}}}}}"
-                    rf"{{\the{cmd}}}"
-                    rf"{{1em}}{{}}"
-                    rf"{{}}"
+                    rf"{{\the{cmd}}}{{1em}}{{}}"
                 )
 
         return "\n".join(lines) + "\n"
